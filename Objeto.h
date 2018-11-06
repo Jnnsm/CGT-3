@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -44,7 +45,7 @@ vector<string> split(string a, string b) {
 template<class T>
 class Duo {
 	friend ostream & operator << (ostream &, const Duo<T>& t) {
-		cout << "(" << t.primeiro << ", " << t.segundo << ") ";
+		cout << "(" << t.primeiro << ", " << t.segundo << ")";
 		return cout;
 	}
 public:
@@ -61,7 +62,7 @@ public:
 
 template<class T>
 ostream & operator << (ostream &cout, const Duo<T>& t) {
-	cout << "(" << t.primeiro << ", " << t.segundo << ") ";
+	cout << "(" << t.primeiro << ", " << t.segundo << ")";
 	return cout;
 }
 
@@ -97,31 +98,84 @@ ostream & operator << (ostream &cout, const Trio<T>& t) {
 class Objeto {
 public:
 	string mtl;
-	double s;
-	Trio<double> *v;
-	Duo<double> *vt;
-	Trio<Duo<double>> *f;
+	bool s;
+	vector<Trio<double>> v;
+	vector<Trio<double>> vn;
+	vector<Duo<double>> vt;
+	vector<Trio<Duo<double>>> f;
 	
 	Objeto() {
-		//Nï¿½o faz nada
+		//Nao faz nada
 	}
 	Objeto(string fileName) {
 		//Preenche os vetores
 		fstream file;
 		string line;
+		vector<string> aux;
+
+		double a, b, c;
 
 		file.open(fileName.c_str(), fstream::in);
 
 		while (!file.eof()) {
-			getine(file, line);
+			getline(file, line);
+			if (line[0] != '#') {
+				aux = split(line, " ");
+				if (aux.empty())
+					break;
+				else if (aux.at(0) == "usemtl" || aux.at(0) == "mtllib")
+					mtl = split(aux.at(1),"()").at(0);
+				else {
+					if (aux.at(0) == "s") {
+						if (aux.at(1) == "0" || aux.at(1) == "off")
+							s = false;
+						else
+							s = true;
+					}
+					else {
+						if (aux.at(0) == "v") {
+							istringstream(aux.at(1)) >> a;
+							istringstream(aux.at(2)) >> b;
+							istringstream(aux.at(3)) >> c;
+							v.push_back(Trio<double>(a, b, c));
+						}
+						else if (aux.at(0) == "vn") {
+							istringstream(aux.at(1)) >> a;
+							istringstream(aux.at(2)) >> b;
+							istringstream(aux.at(3)) >> c;
+							vn.push_back(Trio<double>(a, b, c));
+						}
+						else if (aux.at(0) == "vt") {
+							istringstream(aux.at(1)) >> a;
+							istringstream(aux.at(2)) >> b;
+							vt.push_back(Duo<double>(a, b));
+						}
+						else if (aux.at(0) == "f") {
+							Trio<Duo<double>> auxiliar;
+							istringstream(split(aux.at(1),"/").at(0)) >> auxiliar.primeiro.primeiro;
+							istringstream(split(aux.at(1), "/").at(1)) >> auxiliar.primeiro.segundo;
+
+							istringstream(split(aux.at(2), "/").at(0)) >> auxiliar.segundo.primeiro;
+							istringstream(split(aux.at(2), "/").at(1)) >> auxiliar.segundo.segundo;
+
+							istringstream(split(aux.at(3), "/").at(0)) >> auxiliar.terceiro.primeiro;
+							istringstream(split(aux.at(3), "/").at(1)) >> auxiliar.terceiro.segundo;
+
+							f.push_back(auxiliar);
+
+							cout << auxiliar << endl;
+						}
+					}
+				}
+			}
 		}
+
+		cout << v.size() << " " << vn.size() << " " << vt.size() << " " << f.size() << endl;
+		
 	}
 
 	~Objeto() {
-		//Deleta os vetores
-		delete[]v;
-		delete[]vt;
-		delete[]f;
+		//Não faz nada
 	}
 
 };
