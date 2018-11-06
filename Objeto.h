@@ -109,11 +109,18 @@ public:
 	}
 	Objeto(string fileName) {
 		//Preenche os vetores
+
+
+		// Variáveis para auxilio do preenchimento
 		fstream file;
 		string line;
 		vector<string> aux;
 
-		double a, b, c;
+		// Variáveis que guardam os valores do arquivo enquanto são lidas
+
+		Trio<double> Taux;
+		Duo<double> Daux;
+		Trio<Duo<double>> TDaux;
 
 		file.open(fileName.c_str(), fstream::in);
 
@@ -134,44 +141,38 @@ public:
 					}
 					else {
 						if (aux.at(0) == "v") {
-							istringstream(aux.at(1)) >> a;
-							istringstream(aux.at(2)) >> b;
-							istringstream(aux.at(3)) >> c;
-							v.push_back(Trio<double>(a, b, c));
+							istringstream(aux.at(1)) >> Taux.primeiro;
+							istringstream(aux.at(2)) >> Taux.segundo;
+							istringstream(aux.at(3)) >> Taux.terceiro;
+							v.push_back(Taux);
 						}
 						else if (aux.at(0) == "vn") {
-							istringstream(aux.at(1)) >> a;
-							istringstream(aux.at(2)) >> b;
-							istringstream(aux.at(3)) >> c;
-							vn.push_back(Trio<double>(a, b, c));
+							istringstream(aux.at(1)) >> Taux.primeiro;
+							istringstream(aux.at(2)) >> Taux.segundo;
+							istringstream(aux.at(3)) >> Taux.terceiro;
+							vn.push_back(Taux);
 						}
 						else if (aux.at(0) == "vt") {
-							istringstream(aux.at(1)) >> a;
-							istringstream(aux.at(2)) >> b;
-							vt.push_back(Duo<double>(a, b));
+							istringstream(aux.at(1)) >> Daux.primeiro;
+							istringstream(aux.at(2)) >> Daux.segundo;
+							vt.push_back(Daux);
 						}
 						else if (aux.at(0) == "f") {
-							Trio<Duo<double>> auxiliar;
-							istringstream(split(aux.at(1),"/").at(0)) >> auxiliar.primeiro.primeiro;
-							istringstream(split(aux.at(1), "/").at(1)) >> auxiliar.primeiro.segundo;
+							istringstream(split(aux.at(1),"/").at(0)) >> TDaux.primeiro.primeiro;
+							istringstream(split(aux.at(1), "/").at(1)) >> TDaux.primeiro.segundo;
 
-							istringstream(split(aux.at(2), "/").at(0)) >> auxiliar.segundo.primeiro;
-							istringstream(split(aux.at(2), "/").at(1)) >> auxiliar.segundo.segundo;
+							istringstream(split(aux.at(2), "/").at(0)) >> TDaux.segundo.primeiro;
+							istringstream(split(aux.at(2), "/").at(1)) >> TDaux.segundo.segundo;
 
-							istringstream(split(aux.at(3), "/").at(0)) >> auxiliar.terceiro.primeiro;
-							istringstream(split(aux.at(3), "/").at(1)) >> auxiliar.terceiro.segundo;
+							istringstream(split(aux.at(3), "/").at(0)) >> TDaux.terceiro.primeiro;
+							istringstream(split(aux.at(3), "/").at(1)) >> TDaux.terceiro.segundo;
 
-							f.push_back(auxiliar);
-
-							cout << auxiliar << endl;
+							f.push_back(TDaux);
 						}
 					}
 				}
 			}
 		}
-
-		cout << v.size() << " " << vn.size() << " " << vt.size() << " " << f.size() << endl;
-		
 	}
 
 	~Objeto() {
