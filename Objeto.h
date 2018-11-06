@@ -69,7 +69,7 @@ public:
 	Trio<Duo<double>> *f;
 	
 	Objeto() {
-		//Não faz nada
+		//Nï¿½o faz nada
 	}
 	Objeto(string fileName) {
 		//Preenche os vetores
