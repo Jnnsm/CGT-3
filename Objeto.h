@@ -8,9 +8,41 @@
 
 using namespace std;
 
+// Implementação de uma função split para dividir umas string
+
+vector<string> split(string a, string b) {
+	string aux = "";
+	vector<string> result;
+
+	if (a.size() == 0 || b.size() == 0)
+		return result;
+
+	for (int i = 0; i < a.size(); i++) {
+		bool add = true;
+		for (int j = 0; j < b.size(); j++) {
+			if (a[i] == b[j]) {
+				add = false;
+				break;
+			}
+		}
+		if (!add) {
+			if (aux != "")
+				result.push_back(aux);
+			aux = "";
+		}
+		else
+			aux += a[i];
+	}
+	if (aux != "")
+		result.push_back(aux);
+	return result;
+}
+
+
+// Classe para variaveis duplas
+
 template<class T>
 class Duo {
-	//template<class T>
 	friend ostream & operator << (ostream &, const Duo<T>& t) {
 		cout << "(" << t.primeiro << ", " << t.segundo << ") ";
 		return cout;
@@ -33,10 +65,10 @@ ostream & operator << (ostream &cout, const Duo<T>& t) {
 	return cout;
 }
 
+// Classe para variáveis triplas
 
 template<class T>
 class Trio {
-	//template<class T>
 	friend ostream & operator << (ostream &cout, const Trio<T>& t) {
 		cout << "(" << t.primeiro << ", " << t.segundo << ", " << t.terceiro << ") ";
 		return cout;
@@ -60,6 +92,8 @@ ostream & operator << (ostream &cout, const Trio<T>& t) {
 	return cout;
 }
 
+// Classe para um objeto completo
+
 class Objeto {
 public:
 	string mtl;
@@ -79,7 +113,7 @@ public:
 		file.open(fileName.c_str(), fstream::in);
 
 		while (!file.eof()) {
-
+			getine(file, line);
 		}
 	}
 
