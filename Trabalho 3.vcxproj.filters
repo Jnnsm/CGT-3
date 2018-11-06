@@ -18,11 +18,17 @@
     <ClInclude Include="Objeto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Funcoes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="DragonEye.obj">
