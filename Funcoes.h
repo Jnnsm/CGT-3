@@ -1,6 +1,10 @@
 #ifndef FUNCOES_H__
 #define FUNCOES_H__
 #include <GL/glut.h>
+#include <vector>
+#include "Objeto.h"
+
+extern Objeto dr;
 
 GLfloat vertices[8][3] = { {-1.0,-1.0,1.0},{-1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,-1.0,1.0},
 {-1.0,-1.0,-1.0},{-1.0,1.0,-1.0},{1.0,1.0,-1.0},{1.0,-1.0,-1.0} };
@@ -13,11 +17,13 @@ GLdouble viewer[] = { 3.0, 3.0, 3.0 };
 
 void quad(int a, int b, int c, int d, int ncolor) {
 	glColor3fv(colors[ncolor]);
-	glBegin(GL_QUADS);
+	
+	/*glBegin(GL_QUADS);
 	glVertex3fv(vertices[a]);
 	glVertex3fv(vertices[b]);
 	glVertex3fv(vertices[c]);
 	glVertex3fv(vertices[d]);
+	*/
 	glEnd();
 }
 
@@ -37,7 +43,22 @@ void display() {
 		0.0, 0.0, 0.0,                           
 		0.0, 1.0, 0.0);                         
 
-	colorcube();
+	//colorcube();
+
+	glColor3f(1,1,1);
+	for (int i = 0; i < dr.f.size(); i++) {
+	glBegin(GL_TRIANGLES);
+		int a, b, c;
+		a = dr.f.at(i).primeiro.primeiro - 1;
+		b = dr.f.at(i).segundo.primeiro - 1;
+		c = dr.f.at(i).terceiro.primeiro - 1;
+
+		glVertex3f(dr.v.at(a).primeiro, dr.v.at(a).segundo, dr.v.at(a).terceiro);
+		glVertex3f(dr.v.at(b).primeiro, dr.v.at(b).segundo, dr.v.at(b).terceiro);
+		glVertex3f(dr.v.at(c).primeiro, dr.v.at(c).segundo, dr.v.at(c).terceiro);
+	
+	glEnd();
+	}
 
 	glFlush();
 }
@@ -47,7 +68,7 @@ void initialize() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluPerspective(70, 1, 2, 20);
+	gluPerspective(144, 1, 2, 20);
 	glMatrixMode(GL_MODELVIEW);
 }
 #endif

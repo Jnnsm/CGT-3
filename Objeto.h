@@ -110,7 +110,11 @@ public:
 	Objeto(string fileName) {
 		//Preenche os vetores
 
+		read2(fileName);
 
+	}
+	// Metodo read versão 1 (lento para obj grandes)
+	void read1(string fileName) {
 		// Variáveis para auxilio do preenchimento
 		fstream file;
 		string line;
@@ -124,14 +128,13 @@ public:
 
 		file.open(fileName.c_str(), fstream::in);
 
-		while (!file.eof()) {
-			getline(file, line);
+		while (getline(file, line)) {
 			if (line[0] != '#') {
 				aux = split(line, " ");
 				if (aux.empty())
 					break;
 				else if (aux.at(0) == "usemtl" || aux.at(0) == "mtllib")
-					mtl = split(aux.at(1),"()").at(0);
+					mtl = split(aux.at(1), "()").at(0);
 				else {
 					if (aux.at(0) == "s") {
 						if (aux.at(1) == "0" || aux.at(1) == "off")
@@ -158,7 +161,7 @@ public:
 							vt.push_back(Daux);
 						}
 						else if (aux.at(0) == "f") {
-							istringstream(split(aux.at(1),"/").at(0)) >> TDaux.primeiro.primeiro;
+							istringstream(split(aux.at(1), "/").at(0)) >> TDaux.primeiro.primeiro;
 							istringstream(split(aux.at(1), "/").at(1)) >> TDaux.primeiro.segundo;
 
 							istringstream(split(aux.at(2), "/").at(0)) >> TDaux.segundo.primeiro;
@@ -173,6 +176,88 @@ public:
 				}
 			}
 		}
+		file.close();
+	}
+	// Método read com tentativa de "otimização"
+	void read2(string fileName) {
+		// Variáveis para auxilio do preenchimento
+		fstream file;
+		string line;
+		vector<string> aux;
+
+		// Variáveis que guardam os valores do arquivo enquanto são lidas
+
+		Trio<double> Taux;
+		Duo<double> Daux;
+		Trio<Duo<double>> TDaux;
+
+		file.open(fileName.c_str(), fstream::in);
+		
+		while (getline(file, line, ' ')) {
+			if (line[0] == '#')
+				getline(file, line);
+			else {
+				if (line == "usemtl" || line == "mtllib") {
+					getline(file, line);
+					mtl = split(line, "()").at(0);
+				}
+				else {
+					if (line[0] == 's') {
+						getline(file, line);
+						if (line == "0" || line == "off")
+							s = false;
+						else
+							s = true;
+					}
+					else {
+						if (line == "v") {
+							getline(file, line, ' ');
+							istringstream(line) >> Taux.primeiro;
+							getline(file, line, ' ');
+							istringstream(line) >> Taux.segundo;
+							getline(file, line);
+							istringstream(line) >> Taux.terceiro;
+							v.push_back(Taux);
+						}
+						else if (line == "vn") {
+							getline(file, line, ' ');
+							istringstream(line) >> Taux.primeiro;
+							getline(file, line, ' ');
+							istringstream(line) >> Taux.segundo;
+							getline(file, line);
+							istringstream(line) >> Taux.terceiro;
+							vn.push_back(Taux);
+						}
+						else if (line == "vt") {
+							getline(file, line, ' ');
+							istringstream(line) >> Daux.primeiro;
+							getline(file, line);
+							istringstream(line) >> Daux.segundo;
+							vt.push_back(Daux);
+						}
+						else if (line == "f") {
+							getline(file, line, '/');
+							istringstream(line) >> TDaux.primeiro.primeiro;
+							getline(file, line, ' ');
+							istringstream(line) >> TDaux.primeiro.segundo;
+
+							getline(file, line, '/');
+							istringstream(line) >> TDaux.segundo.primeiro;
+							getline(file, line, ' ');
+							istringstream(line) >> TDaux.segundo.segundo;
+
+							getline(file, line, '/');
+							istringstream(line) >> TDaux.terceiro.primeiro;
+							getline(file, line);
+							istringstream(line) >> TDaux.terceiro.segundo;
+
+							f.push_back(TDaux);
+						}
+					}
+				}
+			}
+		}
+		file.close();
 	}
 
 	~Objeto() {

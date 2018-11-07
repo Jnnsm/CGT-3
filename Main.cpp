@@ -5,12 +5,10 @@
 
 using namespace std;
 
+Objeto dr("Dragon.obj");
 int __WIDTH = 600, __HEIGHT = 600;
 
 int main(int argc, char **argv) {
-	// Le o objeto 
-	Objeto dr("DragonEye.obj");
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
 
