@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Objeto dr("Dragon.obj");
+Objeto dr("Teapot.obj");
 int __WIDTH = 600, __HEIGHT = 600;
 
 int main(int argc, char **argv) {
