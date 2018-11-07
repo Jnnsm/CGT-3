@@ -7,6 +7,7 @@ using namespace std;
 
 Objeto dr("Teapot.obj");
 int __WIDTH = 600, __HEIGHT = 600;
+int rotatex = 0, rotatey = 0;
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
@@ -17,6 +18,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Trabalho 3");
 
 	initialize();
+	glutKeyboardFunc(keyboard);
 	glutDisplayFunc(display);
 	glEnable(GL_CULL_FACE);
 

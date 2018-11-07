@@ -6,14 +6,39 @@
 
 extern Objeto dr;
 
+extern int rotatex, rotatey;
+
 GLdouble viewer[] = { 3.0, 3.0, 3.0 };
+
+void keyboard(unsigned char key, int x, int y) {
+	
+	switch (key) {
+		case 'a':
+			rotatex--;
+			break;
+		case 'd':
+			rotatex++;
+			break;
+		case 's':
+			rotatey--;
+			break;
+		case 'w':
+			rotatey++;
+			break;
+	}
+	
+	glutPostRedisplay();
+}
 
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 	glLoadIdentity();
 	gluLookAt(viewer[0], viewer[1], viewer[2],
 		0.0, 0.0, 0.0,                           
-		0.0, 1.0, 0.0);                         
+		0.0, 1.0, 0.0);     
+
+	glRotatef(rotatex, 0, 1, 0);
+	glRotatef(rotatey, 1, 0, 0);
 
 	glColor3f(0,1,1);
 	for (int i = 0; i < dr.f.size(); i++) {
