@@ -12,6 +12,10 @@ int rotatex = 0, rotatey = 0;
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
 	glutInitWindowSize(__WIDTH, __HEIGHT);
 	glutInitWindowPosition(10, 10);
@@ -20,7 +24,7 @@ int main(int argc, char **argv) {
 	initialize();
 	glutKeyboardFunc(keyboard);
 	glutDisplayFunc(display);
-	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 	glutMainLoop();
 

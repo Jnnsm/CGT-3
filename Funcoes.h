@@ -8,7 +8,7 @@ extern Objeto dr;
 
 extern int rotatex, rotatey;
 
-GLdouble viewer[] = { 3.0, 3.0, 3.0 };
+GLdouble viewer[] = { 3, 3, 6 };
 
 void keyboard(unsigned char key, int x, int y) {
 	
@@ -37,10 +37,30 @@ void display() {
 		0.0, 0.0, 0.0,                           
 		0.0, 1.0, 0.0);     
 
+	// xyz
+	glColor3f(1, 0, 0);
+	glBegin(GL_LINES);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(15, 0, 0);
+	glEnd();
+
+	glColor3f(0, 1, 0);
+	glBegin(GL_LINES);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(0, 15, 0);
+	glEnd();
+
+	glColor3f(0, 0, 1);
+	glBegin(GL_LINES);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(0, 0, 15);
+	glEnd();
+
 	glRotatef(rotatex, 0, 1, 0);
 	glRotatef(rotatey, 1, 0, 0);
 
-	glColor3f(0,1,1);
+	//Desenha a figura
+	glColor3f(1,1,1);
 	for (int i = 0; i < dr.f.size(); i++) {
 	glBegin(GL_TRIANGLES);
 		int a, b, c;
@@ -62,8 +82,7 @@ void initialize() {
 	glClearColor(0, 0, 0, 0);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
-	gluPerspective(144, 1, 2, 20);
+	gluPerspective(110, 1, 1, 50);
 	glMatrixMode(GL_MODELVIEW);
 }
 #endif
