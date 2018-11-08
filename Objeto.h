@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <thread>
 
 using namespace std;
 
@@ -120,7 +121,23 @@ public:
 	}
 	Objeto(string fileName) {
 		//Preenche os vetores
+		read(fileName);
+	}
 
+	void eraseData() {
+		mtl = "";
+		s = false;
+
+		v.clear();
+		vn.clear();
+		vt.clear();
+		f.clear();
+
+	}
+
+	void initialize(string fileName) {
+
+		eraseData();
 		read(fileName);
 	}
 

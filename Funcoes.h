@@ -30,12 +30,12 @@ void keyboard(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
-void display() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+void showBaseScreen() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	gluLookAt(viewer[0], viewer[1], viewer[2],
-		0.0, 0.0, 0.0,                           
-		0.0, 1.0, 0.0);     
+		0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0);
 
 	// xyz
 	glColor3f(1, 0, 0);
@@ -56,38 +56,46 @@ void display() {
 		glVertex3f(0, 0, 15);
 	glEnd();
 
+}
+
+void showObjects() {
 	glRotatef(rotatex, 0, 1, 0);
 	glRotatef(rotatey, 1, 0, 0);
-	
+
 	//Desenha a figura
-	glColor3f(1,1,1);
+	glColor3f(1, 1, 1);
 
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < dr.f.size(); i++) {
-			// Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço
-			glVertex3f(
-				dr.v.at( dr.f.at(i).primeiro.primeiro - 1 ).primeiro,
-				dr.v.at( dr.f.at(i).primeiro.primeiro - 1 ).segundo,
-				dr.v.at( dr.f.at(i).primeiro.primeiro - 1 ).terceiro
-			);
-			
-			glVertex3f(
-				dr.v.at( dr.f.at(i).segundo.primeiro - 1 ).primeiro,
-				dr.v.at( dr.f.at(i).segundo.primeiro - 1 ).segundo,
-				dr.v.at( dr.f.at(i).segundo.primeiro - 1 ).terceiro
-			);
-			
-			glVertex3f(
-				dr.v.at( dr.f.at(i).terceiro.primeiro - 1 ).primeiro,
-				dr.v.at( dr.f.at(i).terceiro.primeiro - 1 ).segundo,
-				dr.v.at( dr.f.at(i).terceiro.primeiro - 1 ).terceiro
-			);
-	
-		
+		// Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço
+		glVertex3f(
+			dr.v.at(dr.f.at(i).primeiro.primeiro - 1).primeiro,
+			dr.v.at(dr.f.at(i).primeiro.primeiro - 1).segundo,
+			dr.v.at(dr.f.at(i).primeiro.primeiro - 1).terceiro
+		);
+
+		glVertex3f(
+			dr.v.at(dr.f.at(i).segundo.primeiro - 1).primeiro,
+			dr.v.at(dr.f.at(i).segundo.primeiro - 1).segundo,
+			dr.v.at(dr.f.at(i).segundo.primeiro - 1).terceiro
+		);
+
+		glVertex3f(
+			dr.v.at(dr.f.at(i).terceiro.primeiro - 1).primeiro,
+			dr.v.at(dr.f.at(i).terceiro.primeiro - 1).segundo,
+			dr.v.at(dr.f.at(i).terceiro.primeiro - 1).terceiro
+		);
+
+
 	}
 	glEnd();
+}
 
+void display() {
+	showBaseScreen();
+	showObjects();
 	glFlush();
+
 }
 
 void timer(int) {
@@ -104,6 +112,7 @@ void initialize() {
 	gluPerspective(110, 1, 1, 50);
 	glMatrixMode(GL_MODELVIEW);
 
-	//glutTimerFunc(0, timer, 0);
+	showBaseScreen();
+	glFlush();
 }
 #endif
