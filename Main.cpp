@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Objeto dr("Teapot.obj");
+Objeto dr("Dragon.obj");
 int __WIDTH = 600, __HEIGHT = 600;
 int rotatex = 0, rotatey = 0;
 

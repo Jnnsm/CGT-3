@@ -58,6 +58,11 @@ public:
 		segundo = s;
 	}
 
+	void altera(T p, T s) {
+		primeiro = p;
+		segundo = s;
+	}
+
 };
 
 template<class T>
@@ -81,6 +86,12 @@ public:
 
 	Trio() {}
 	Trio(T p, T s, T t) {
+		primeiro = p;
+		segundo = s;
+		terceiro = t;
+	}
+
+	void altera(T p, T s, T t) {
 		primeiro = p;
 		segundo = s;
 		terceiro = t;
@@ -110,11 +121,11 @@ public:
 	Objeto(string fileName) {
 		//Preenche os vetores
 
-		read2(fileName);
-
+		read(fileName);
 	}
-	// Metodo read versão 1 (lento para obj grandes)
-	void read1(string fileName) {
+
+	// Método read ainda preicisa de mudanças
+	void read(string fileName) {
 		// Variáveis para auxilio do preenchimento
 		fstream file;
 		string line;
@@ -126,72 +137,7 @@ public:
 		Duo<double> Daux;
 		Trio<Duo<double>> TDaux;
 
-		file.open(fileName.c_str(), fstream::in);
-
-		while (getline(file, line)) {
-			if (line[0] != '#') {
-				aux = split(line, " ");
-				if (aux.empty())
-					break;
-				else if (aux.at(0) == "usemtl" || aux.at(0) == "mtllib")
-					mtl = split(aux.at(1), "()").at(0);
-				else {
-					if (aux.at(0) == "s") {
-						if (aux.at(1) == "0" || aux.at(1) == "off")
-							s = false;
-						else
-							s = true;
-					}
-					else {
-						if (aux.at(0) == "v") {
-							istringstream(aux.at(1)) >> Taux.primeiro;
-							istringstream(aux.at(2)) >> Taux.segundo;
-							istringstream(aux.at(3)) >> Taux.terceiro;
-							v.push_back(Taux);
-						}
-						else if (aux.at(0) == "vn") {
-							istringstream(aux.at(1)) >> Taux.primeiro;
-							istringstream(aux.at(2)) >> Taux.segundo;
-							istringstream(aux.at(3)) >> Taux.terceiro;
-							vn.push_back(Taux);
-						}
-						else if (aux.at(0) == "vt") {
-							istringstream(aux.at(1)) >> Daux.primeiro;
-							istringstream(aux.at(2)) >> Daux.segundo;
-							vt.push_back(Daux);
-						}
-						else if (aux.at(0) == "f") {
-							istringstream(split(aux.at(1), "/").at(0)) >> TDaux.primeiro.primeiro;
-							istringstream(split(aux.at(1), "/").at(1)) >> TDaux.primeiro.segundo;
-
-							istringstream(split(aux.at(2), "/").at(0)) >> TDaux.segundo.primeiro;
-							istringstream(split(aux.at(2), "/").at(1)) >> TDaux.segundo.segundo;
-
-							istringstream(split(aux.at(3), "/").at(0)) >> TDaux.terceiro.primeiro;
-							istringstream(split(aux.at(3), "/").at(1)) >> TDaux.terceiro.segundo;
-
-							f.push_back(TDaux);
-						}
-					}
-				}
-			}
-		}
-		file.close();
-	}
-	// Método read com tentativa de "otimização"
-	void read2(string fileName) {
-		// Variáveis para auxilio do preenchimento
-		fstream file;
-		string line;
-		vector<string> aux;
-
-		// Variáveis que guardam os valores do arquivo enquanto são lidas
-
-		Trio<double> Taux;
-		Duo<double> Daux;
-		Trio<Duo<double>> TDaux;
-
-		file.open(fileName.c_str(), fstream::in);
+		file.open(fileName.c_str(), fstream::in | fstream::binary);
 		
 		while (getline(file, line, ' ')) {
 			if (line[0] == '#')

@@ -58,31 +58,52 @@ void display() {
 
 	glRotatef(rotatex, 0, 1, 0);
 	glRotatef(rotatey, 1, 0, 0);
-
+	
 	//Desenha a figura
 	glColor3f(1,1,1);
-	for (int i = 0; i < dr.f.size(); i++) {
-	glBegin(GL_TRIANGLES);
-		int a, b, c;
-		a = dr.f.at(i).primeiro.primeiro - 1;
-		b = dr.f.at(i).segundo.primeiro - 1;
-		c = dr.f.at(i).terceiro.primeiro - 1;
 
-		glVertex3f(dr.v.at(a).primeiro, dr.v.at(a).segundo, dr.v.at(a).terceiro);
-		glVertex3f(dr.v.at(b).primeiro, dr.v.at(b).segundo, dr.v.at(b).terceiro);
-		glVertex3f(dr.v.at(c).primeiro, dr.v.at(c).segundo, dr.v.at(c).terceiro);
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < dr.f.size(); i++) {
+			// Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço
+			glVertex3f(
+				dr.v.at( dr.f.at(i).primeiro.primeiro - 1 ).primeiro,
+				dr.v.at( dr.f.at(i).primeiro.primeiro - 1 ).segundo,
+				dr.v.at( dr.f.at(i).primeiro.primeiro - 1 ).terceiro
+			);
+			
+			glVertex3f(
+				dr.v.at( dr.f.at(i).segundo.primeiro - 1 ).primeiro,
+				dr.v.at( dr.f.at(i).segundo.primeiro - 1 ).segundo,
+				dr.v.at( dr.f.at(i).segundo.primeiro - 1 ).terceiro
+			);
+			
+			glVertex3f(
+				dr.v.at( dr.f.at(i).terceiro.primeiro - 1 ).primeiro,
+				dr.v.at( dr.f.at(i).terceiro.primeiro - 1 ).segundo,
+				dr.v.at( dr.f.at(i).terceiro.primeiro - 1 ).terceiro
+			);
 	
-	glEnd();
+		
 	}
+	glEnd();
 
 	glFlush();
 }
 
+void timer(int) {
+	glutPostRedisplay();
+
+	glutTimerFunc(1000 / 60, timer, 0);
+}
+
 void initialize() {
 	glClearColor(0, 0, 0, 0);
+	glLoadIdentity();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(110, 1, 1, 50);
 	glMatrixMode(GL_MODELVIEW);
+
+	//glutTimerFunc(0, timer, 0);
 }
 #endif
