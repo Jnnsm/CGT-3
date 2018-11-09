@@ -28,17 +28,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Media Include="Dragon.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="DragonEye.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Teapot.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="DragonEye.obj">
+    <Object Include="Gabumon.obj">
       <Filter>Resource Files</Filter>
     </Object>
-    <Object Include="Dragon.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="Teapot.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

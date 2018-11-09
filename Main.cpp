@@ -5,20 +5,22 @@
 
 using namespace std;
 
-Objeto dr;
-int __WIDTH = 600, __HEIGHT = 600;
-int rotatex = 0, rotatey = 0;
+vector<Objeto> objs;
+double __WIDTH = 800, __HEIGHT = 600;
 
 void createObj(string fileName) {
+	Objeto dr;
 	dr.initialize(fileName);
+	objs.push_back(dr);
 }
 
 int main(int argc, char **argv) {
-	thread t(createObj, ("Dragon.obj"));
+	thread t(createObj, ("DragonEye.obj"));
+	thread t2(createObj, ("Teapot.obj"));
 	
-
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -29,11 +31,15 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Trabalho 3");
 
 	initialize();
-	
+
 	glutKeyboardFunc(keyboard);
+	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
 	glEnable(GL_DEPTH_TEST);
+
 	t.join();
+	t2.join();
+
 	glutMainLoop();
 
 
