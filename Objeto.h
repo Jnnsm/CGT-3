@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// Implementação de uma função split para dividir umas string
+/* Implementação de uma função split para dividir umas string */ 
 
 vector<string> split(string a, string b) {
 	string aux = "";
@@ -41,7 +41,7 @@ vector<string> split(string a, string b) {
 }
 
 
-// Classe para variaveis duplas
+/* Classe para variaveis duplas */
 
 template<class T>
 class Duo {
@@ -72,7 +72,7 @@ ostream & operator << (ostream &cout, const Duo<T>& t) {
 	return cout;
 }
 
-// Classe para variáveis triplas
+/* Classe para variáveis triplas */
 
 template<class T>
 class Trio {
@@ -105,10 +105,15 @@ ostream & operator << (ostream &cout, const Trio<T>& t) {
 	return cout;
 }
 
-// Classe para um objeto completo
+/* Classe para um objeto completo */
 
 class Objeto {
 public:
+	/* Variáveis relacionadas com o objeto */
+	Trio<double> cor;
+	double transparencia;
+
+	/* Variáveis relacionadas com o arquivo */
 	string mtl;
 	bool s;
 	vector<Trio<double>> v;
@@ -117,13 +122,15 @@ public:
 	vector<Trio<Duo<double>>> f;
 	
 	Objeto() {
-		//Nao faz nada
+		/* Nao faz nada */
 	}
 	Objeto(string fileName) {
-		//Preenche os vetores
+		/* Preenche os vetores */ 
 		read(fileName);
+		/* Randomiza a cor e coloca o objeto sólido */
 	}
 
+	/* Limpa o objeto */
 	void eraseData() {
 		mtl = "";
 		s = false;
@@ -135,13 +142,13 @@ public:
 
 	}
 
+	/* Preenche o objeto */
 	void initialize(string fileName) {
-
 		eraseData();
 		read(fileName);
 	}
 
-	// Método read ainda preicisa de mudanças
+	/* Lê do arquivo o objeto */
 	void read(string fileName) {
 		// Variáveis para auxilio do preenchimento
 		fstream file;
@@ -224,7 +231,7 @@ public:
 	}
 
 	~Objeto() {
-		//Não faz nada
+		/* Não faz nada */
 	}
 
 };
