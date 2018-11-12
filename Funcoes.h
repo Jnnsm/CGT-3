@@ -72,7 +72,6 @@ void showBaseScreen() {
 }
 /* Desenha cada objeto na tela */
 void showObjects() {
-	glColor4f(1, 0, 0, 0.5);
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++){
 
 		glPushMatrix();
@@ -80,6 +79,7 @@ void showObjects() {
 		glRotatef(rotatex, 0, 1, 0);
 		glRotatef(rotatey, 1, 0, 0);
 
+		glColor4f((*o).cor.primeiro, (*o).cor.segundo, (*o).cor.terceiro, (*o).alpha);
 		glBegin(GL_TRIANGLES);
 		for (int i = 0; i < (*o).f.size(); i++) {
 			/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço */
@@ -218,4 +218,14 @@ void initialize() {
 
 	glutSwapBuffers();
 }
+
+/* Função para carregar objeto */
+void createObj(string fileName, Trio<double> color) {
+	Objeto dr;
+	
+	dr.initialize(fileName, color);
+
+	objs.push_back(dr);
+}
+
 #endif

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <thread>
+#include <time.h>
 
 using namespace std;
 
@@ -111,7 +112,7 @@ class Objeto {
 public:
 	/* Variáveis relacionadas com o objeto */
 	Trio<double> cor;
-	double transparencia;
+	double alpha;
 
 	/* Variáveis relacionadas com o arquivo */
 	string mtl;
@@ -127,11 +128,22 @@ public:
 	Objeto(string fileName) {
 		/* Preenche os vetores */ 
 		read(fileName);
-		/* Randomiza a cor e coloca o objeto sólido */
+		/* Ccoloca o objeto sólido */
+		alpha = 1;
+	}
+	Objeto(string fileName, Trio<double> rgb) {
+		/* Preenche os vetores */
+		read(fileName);
+		/* Altera a cor e coloca o objeto sólido */
+		alpha = 1;
+		cor.altera(rgb.primeiro, rgb.segundo, rgb.terceiro);
 	}
 
 	/* Limpa o objeto */
 	void eraseData() {
+		alpha = 1;
+		cor.altera(0,0,0);
+
 		mtl = "";
 		s = false;
 
@@ -144,8 +156,21 @@ public:
 
 	/* Preenche o objeto */
 	void initialize(string fileName) {
+		
 		eraseData();
 		read(fileName);
+
+		alpha = 1;
+	}
+
+	/* Preenche o objeto e adiciona cor */
+	void initialize(string fileName, Trio<double> rgb) {
+
+		eraseData();
+		read(fileName);
+
+		alpha = 1;
+		cor.altera(rgb.primeiro, rgb.segundo, rgb.terceiro);
 	}
 
 	/* Lê do arquivo o objeto */

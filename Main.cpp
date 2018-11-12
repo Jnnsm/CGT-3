@@ -1,5 +1,6 @@
 #include <iostream>
 #include <GL/glut.h>
+#include <time.h>
 #include "Objeto.h"
 #include "Funcoes.h"
 
@@ -9,17 +10,15 @@ using namespace std;
 vector<Objeto> objs;
 double __WIDTH = 800, __HEIGHT = 600;
 
-/* Função para carregar objeto */
-void createObj(string fileName) {
-	Objeto dr;
-	dr.initialize(fileName);
-	objs.push_back(dr);
-}
-
 int main(int argc, char **argv) {
+	srand(time(NULL));
+
 	/* Cria 2 objetos que são carregados de maneira paralela */
-	thread t(createObj, ("DragonEye.obj"));
-	thread t2(createObj, ("Teapot.obj"));
+	Trio<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
+	thread t(createObj, ("DragonEye.obj"), aux);
+
+	aux.altera((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
+	thread t2(createObj, ("Teapot.obj"), aux);
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
