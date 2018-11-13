@@ -1,6 +1,6 @@
 #ifndef FUNCOES_H__
 #define FUNCOES_H__
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <vector>
 #include "Objeto.h"
 
@@ -15,6 +15,8 @@
 extern vector<Objeto> objs;
 extern double __WIDTH, __HEIGHT;
 
+int poligonos = 0;
+int deltaTime = 0;
 int menuPos = 0;
 int rotatex = 0, rotatey = 0;
 double aspect_ratio = __WIDTH / __HEIGHT;
@@ -72,38 +74,44 @@ void showBaseScreen() {
 }
 /* Desenha cada objeto na tela */
 void showObjects() {
+	poligonos = 0;
+	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++){
 
+
+		poligonos += (*o).f.size();
 		glPushMatrix();
 
-		glRotatef(rotatex, 0, 1, 0);
-		glRotatef(rotatey, 1, 0, 0);
+			glRotatef(rotatex, 0, 1, 0);
+			glRotatef(rotatey, 1, 0, 0);
 
-		glColor4f((*o).cor.primeiro, (*o).cor.segundo, (*o).cor.terceiro, (*o).alpha);
-		glBegin(GL_TRIANGLES);
-		for (int i = 0; i < (*o).f.size(); i++) {
-			/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço */
-			glVertex3f(
-				(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).primeiro,
-				(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).segundo,
-				(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).terceiro
-			);
+			glColor4f((*o).cor.primeiro, (*o).cor.segundo, (*o).cor.terceiro, (*o).alpha);
+			glBegin(GL_TRIANGLES);
+			for (int i = 0; i < (*o).f.size(); i++) {
+				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço */
+				glVertex3f(
+					(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).primeiro,
+					(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).segundo,
+					(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).terceiro
+				);
 
-			glVertex3f(
-				(*o).v.at((*o).f.at(i).segundo.primeiro - 1).primeiro,
-				(*o).v.at((*o).f.at(i).segundo.primeiro - 1).segundo,
-				(*o).v.at((*o).f.at(i).segundo.primeiro - 1).terceiro
-			);
+				glVertex3f(
+					(*o).v.at((*o).f.at(i).segundo.primeiro - 1).primeiro,
+					(*o).v.at((*o).f.at(i).segundo.primeiro - 1).segundo,
+					(*o).v.at((*o).f.at(i).segundo.primeiro - 1).terceiro
+				);
 
-			glVertex3f(
-				(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).primeiro,
-				(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).segundo,
-				(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).terceiro
-			);
-		}
-		glEnd();
+				glVertex3f(
+					(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).primeiro,
+					(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).segundo,
+					(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).terceiro
+				);
+			}
+			glEnd();
+
 		glPopMatrix();
 	}
+	deltaTime = glutGet(GLUT_ELAPSED_TIME) - timeStart;
 }
 
 /* Limpa a tela */
@@ -183,6 +191,24 @@ void displayMenu() {
 
 	glPopMatrix();
 
+	glPushMatrix();
+
+		glColor4d(0, 0, 0, 1);
+		glScaled(0.05, 0.05, 0);
+		glTranslated(55, 45, 0);
+
+		stringstream ss;
+		ss << deltaTime;
+		string time = ss.str() + " ms ";
+	
+		ss.str("");
+		ss << poligonos;
+		time += ss.str() + " poligonos";
+
+		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)time.c_str());
+
+
+	glPopMatrix();
 	
 	glEnable(GL_DEPTH_TEST);
 }
@@ -208,6 +234,12 @@ void reshape(int w, int h){
 	aspect_ratio = 1.0f * (w) / h;
 }
 
+void timer(int) {
+	glutPostRedisplay();
+
+	glutTimerFunc(1000 / 60, timer, 0);
+}
+
 /* Inicializa uma tela vazia apenas com os eixos */
 void initialize() {
 	glClearColor(0, 0, 0, 1);
@@ -217,6 +249,8 @@ void initialize() {
 	showBaseScreen();
 
 	glutSwapBuffers();
+
+	glutTimerFunc(1000/60, timer, 0);
 }
 
 /* Função para carregar objeto */

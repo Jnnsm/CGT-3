@@ -129,13 +129,13 @@ public:
 		/* Preenche os vetores */ 
 		read(fileName);
 		/* Ccoloca o objeto sólido */
-		alpha = 1;
+		alpha = 0.5;
 	}
 	Objeto(string fileName, Trio<double> rgb) {
 		/* Preenche os vetores */
 		read(fileName);
 		/* Altera a cor e coloca o objeto sólido */
-		alpha = 1;
+		alpha = 0.5;
 		cor.altera(rgb.primeiro, rgb.segundo, rgb.terceiro);
 	}
 
@@ -160,7 +160,7 @@ public:
 		eraseData();
 		read(fileName);
 
-		alpha = 1;
+		alpha = 0.5;
 	}
 
 	/* Preenche o objeto e adiciona cor */
@@ -169,7 +169,7 @@ public:
 		eraseData();
 		read(fileName);
 
-		alpha = 1;
+		alpha = 0.5;
 		cor.altera(rgb.primeiro, rgb.segundo, rgb.terceiro);
 	}
 

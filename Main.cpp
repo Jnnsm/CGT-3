@@ -1,5 +1,5 @@
 #include <iostream>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <time.h>
 #include "Objeto.h"
 #include "Funcoes.h"
@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 
 	/* Cria 2 objetos que são carregados de maneira paralela */
 	Trio<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
-	thread t(createObj, ("DragonEye.obj"), aux);
+	thread t(createObj, ("Dragon.obj"), aux);
 
 	aux.altera((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
 	thread t2(createObj, ("Teapot.obj"), aux);
@@ -38,7 +38,9 @@ int main(int argc, char **argv) {
 	glEnable(GL_POLYGON_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
 	glEnable(GL_DEPTH_TEST);
+	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
