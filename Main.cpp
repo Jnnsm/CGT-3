@@ -15,10 +15,10 @@ int main(int argc, char **argv) {
 
 	/* Cria 2 objetos que são carregados de maneira paralela */
 	Trio<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
-	thread t(createObj, ("Dragon.obj"), aux);
+	createObj("Dragon.obj", aux);
 
 	aux.altera((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
-	thread t2(createObj, ("Teapot.obj"), aux);
+	createObj("Teapot.obj", aux);
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -30,8 +30,10 @@ int main(int argc, char **argv) {
 	initialize();
 
 	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
+	
 
 	/* Ativa suavizações, canal alfa e teste de profundidade */
 	glEnable(GL_LINE_SMOOTH);
@@ -44,9 +46,6 @@ int main(int argc, char **argv) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	/* Antes de dar um passo no loop espera as thread t e t2 terminarem */
-	t.join();
-	t2.join();
 
 	glutMainLoop();
 

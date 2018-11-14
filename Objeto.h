@@ -115,6 +115,7 @@ public:
 	double alpha;
 
 	/* Variáveis relacionadas com o arquivo */
+	string name;
 	string mtl;
 	bool s;
 	vector<Trio<double>> v;
@@ -127,12 +128,14 @@ public:
 	}
 	Objeto(string fileName) {
 		/* Preenche os vetores */ 
+		name = fileName;
 		read(fileName);
 		/* Ccoloca o objeto sólido */
 		alpha = 0.5;
 	}
 	Objeto(string fileName, Trio<double> rgb) {
 		/* Preenche os vetores */
+		name = fileName;
 		read(fileName);
 		/* Altera a cor e coloca o objeto sólido */
 		alpha = 0.5;
@@ -141,6 +144,7 @@ public:
 
 	/* Limpa o objeto */
 	void eraseData() {
+		name = "";
 		alpha = 1;
 		cor.altera(0,0,0);
 
@@ -158,6 +162,7 @@ public:
 	void initialize(string fileName) {
 		
 		eraseData();
+		name = fileName;
 		read(fileName);
 
 		alpha = 0.5;
@@ -167,6 +172,7 @@ public:
 	void initialize(string fileName, Trio<double> rgb) {
 
 		eraseData();
+		name = fileName;
 		read(fileName);
 
 		alpha = 0.5;
@@ -256,7 +262,7 @@ public:
 	}
 
 	~Objeto() {
-		/* Não faz nada */
+		eraseData();
 	}
 
 };

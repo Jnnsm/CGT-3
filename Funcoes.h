@@ -15,43 +15,104 @@
 extern vector<Objeto> objs;
 extern double __WIDTH, __HEIGHT;
 
-int poligonos = 0;
-int deltaTime = 0;
+int poly = 0,
+	deltaTime = 0;
+
 int menuPos = 0;
 int rotatex = 0, rotatey = 0;
+
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
-double aspectRatioMenu = 1.0f * (__WIDTH / 4) / __HEIGHT;
 GLdouble viewer[] = { 3.0, 3.0, 6.0 };
 
+string nameBox = "";
+
+bool typing = false;
+
+/* Função para carregar objeto */
+void createObj(string fileName, Trio<double> color) {
+	Objeto dr;
+
+	dr.initialize(fileName, color);
+
+	objs.push_back(dr);
+}
+
+#endif
 
 /* Define os comandos do teclado				 */
 /* i - k = comandos que movem o "menu"			 */
 /* w - a - s - d = comandos que movem os objetos */
 
 void keyboard(unsigned char key, int x, int y) {	
-	switch (key) {
-		case 'i':
-			menuPos--;
-			break;
-		case 'k':
-			menuPos++;
-			break;
-		case 'a':
-			rotatex--;
-			break;
-		case 'd':
-			rotatex++;
-			break;
-		case 's':
-			rotatey--;
-			break;
-		case 'w':
-			rotatey++;
-			break;
+	if (typing) {
+		if (key == 13) {
+			typing = false;
+			Trio<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
+			createObj(nameBox, aux);
+			nameBox = "";
+			return;
+		}
+		else if (key == 8) {
+			if(nameBox.size() > 0)
+				nameBox.pop_back();
+		}
+		else
+			nameBox += key;
+	}
+	else {
+		switch (key) {
+			case 'i':
+				menuPos--;
+				break;
+			case 'k':
+				menuPos++;
+				break;
+			case 'a':
+				rotatex--;
+				break;
+			case 'd':
+				rotatex++;
+				break;
+			case 's':
+				rotatey--;
+				break;
+			case 'w':
+				rotatey++;
+				break;
+		}
 	}
 	
 	glutPostRedisplay();
 }
+
+/* Defne os cliques do mouse */
+void mouse(int button, int state, int x, int y) {
+	if (x >= 3 * __WIDTH / 4) {
+		
+		if (button == GLUT_LEFT_BUTTON) {
+			
+			if (state == GLUT_DOWN) {
+				double xf, yf;
+				xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
+				yf = (200) * (__HEIGHT - y) / __HEIGHT;
+
+				/* Checa se ele está clicando na caixa de importação */
+				if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
+					typing = true;
+				}
+				else if (typing){
+					typing = false;
+				}
+
+			}
+		}
+	}
+	else {
+
+	}
+
+}
+
 /* Desenha os eixos XYZ */
 void showBaseScreen() {
 	glColor4f(1, 0, 0, 1);
@@ -75,12 +136,12 @@ void showBaseScreen() {
 }
 /* Desenha cada objeto na tela */
 void showObjects() {
-	poligonos = 0;
+	poly = 0;
 	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++){
 
 
-		poligonos += (*o).f.size();
+		poly += (*o).f.size();
 		glPushMatrix();
 
 			glRotatef(rotatex, 0, 1, 0);
@@ -143,10 +204,9 @@ void objectsProjection() {
 /* Define os modos de projeção e modelview a serem seguidos na parte da tela referente a exibição do menu */
 void menuProjection() {
 	glMatrixMode(GL_PROJECTION);
-	
 	glLoadIdentity();
 
-	glOrtho(0, 200 * aspectRatioMenu, 0, 200, -2, 2);
+	glOrtho(0, 200 * aspectRatio / 4, 0, 200, -2, 2);
 
 	/* Temos uma viewport de tamanho 1/4 da tela que vai da posição x = 3/4 (do tamanho total) até o final*/
 	glViewport(__WIDTH - __WIDTH / 4, 0, __WIDTH / 4, __HEIGHT);
@@ -166,7 +226,7 @@ void displayObjects() {
 
 /* Chama o necessário para construir o menu*/
 void displayMenu() {
-
+	
 	/* Desativado teste pra checar o que está na frente */
 	glDisable(GL_DEPTH_TEST);
 	
@@ -175,9 +235,29 @@ void displayMenu() {
 
 	/* Desenhamos o background */
 	glColor4f(0.88, 0.88, 0.88, 0.60);
-	glRectd(0.0, 0.0, 200 * aspectRatioMenu, 200.0);
+	glRectd(0.0, 0.0, 200 * aspectRatio / 4, 200.0);
+
+	/* Caixa para digitar arquivo */
+	glPushMatrix();
+		glColor4d(0, 0, 0, 1);
+		glTranslated(20.0f / 3, 190, 0);
+		glScaled(0.035, 0.035, 0);
+		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"Nome do arquivo: ");
+	glPopMatrix();
+
+	glColor4d(0, 0, 0, 0.8);
+	glRectd(20.0f/3 , 180, 60, 188);
+	
+	glPushMatrix();
+		glColor4d(0, 1, 0, 1);
+		glTranslated(23.0f / 3, 182, 0);
+		glScaled(0.035, 0.035, 0);
+		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(nameBox + "_").c_str());
+	glPopMatrix();
+
 
 	/* Damos um push na matrix para não precisarmos redefinir o lookAt novamente para posição original */
+	
 	glPushMatrix();
 
 		gluLookAt(
@@ -187,14 +267,63 @@ void displayMenu() {
 		);
 
 		/* Desenha cada quadrado para exemplo da caixa de cada objeto */
-		glColor4f(0.5, 0, 0, 0.7);
-		for (int i = 0; i < 3; i++) {
-			glRectd(1.0f * 20/3, 200.0 - ((i + 1) * 35 - 5), 60, 200.0 - ((i) * 35));
+		for (int i = 0; i < objs.size(); i++) {
+			glColor4f(objs.at(i).cor.primeiro, objs.at(i).cor.segundo, objs.at(i).cor.terceiro, 0.7);
+			glRectd(20.0f/3, 180 - ((i + 1) * 35), 60, 180 - ((i) * 35 + 5));
+
+			glColor4f(0, 0, 0, 1);
+
+			glPushMatrix();
+
+				glTranslated(23.0f / 3, 175 - ((i) * 35 + 5), 0);
+				glScaled(0.035, 0.035, 0);
+				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(objs.at(i).name).c_str());
+
+			glPopMatrix();
+
+			glPushMatrix();
+
+				glTranslated(23.0f / 3, 168 - ((i) * 35 + 5), 0);
+				glScaled(0.035, 0.035, 0);
+				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"T: ");
+
+			glPopMatrix();
+
+			
+			glRectd(24, 168 - ((i) * 35) ,34, 168 - ((i) * 35 + 5));
+			glRectd(36, 168 - ((i) * 35) ,46, 168 - ((i) * 35 + 5));
+			glRectd(48, 168 - ((i) * 35) ,58, 168 - ((i) * 35 + 5));
+
+			glPushMatrix();
+
+				glTranslated(23.0f / 3, 161 - ((i) * 35 + 5), 0);
+				glScaled(0.035, 0.035, 0);
+				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"R: ");
+
+			glPopMatrix();
+
+			glRectd(12, 161 - ((i) * 35), 22, 161 - ((i) * 35 + 5));
+			glRectd(24, 161 - ((i) * 35), 34, 161 - ((i) * 35 + 5));
+			glRectd(36, 161 - ((i) * 35), 46, 161 - ((i) * 35 + 5));
+			glRectd(48, 161 - ((i) * 35), 58, 161 - ((i) * 35 + 5));
+
+			glPushMatrix();
+
+				glTranslated(23.0f / 3, 154 - ((i) * 35 + 5), 0);
+				glScaled(0.035, 0.035, 0);
+				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"E: ");
+
+			glPopMatrix();
+
+			glRectd(24, 154 - ((i) * 35), 34, 154 - ((i) * 35 + 5));
+			glRectd(36, 154 - ((i) * 35), 46, 154 - ((i) * 35 + 5));
+			glRectd(48, 154 - ((i) * 35), 58, 154 - ((i) * 35 + 5));
+
 		}
 
 	glPopMatrix();
 
-	/* Escreve a quantidade de tempo para desenhar e a quantidade de poligonos na parte de baixo da tela */
+	/* Escreve a quantidade de tempo para desenhar e a quantidade de poly na parte de baixo da tela */
 	glPushMatrix();
 
 		glColor4d(0, 0, 0, 1);
@@ -206,8 +335,8 @@ void displayMenu() {
 		string time = ss.str() + " ms ";
 	
 		ss.str("");
-		ss << poligonos;
-		time += ss.str() + " poligonos";
+		ss << poly;
+		time += ss.str() + " poly";
 
 		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)time.c_str());
 
@@ -219,7 +348,6 @@ void displayMenu() {
 
 /* Chama as funções necessárias para apagar a tela e desenhar os objetos e o menu. Além disso é a controladora do swapBuffer */
 void display() {
-
 	resetView();
 	displayObjects();
 	displayMenu();
@@ -236,13 +364,12 @@ void reshape(int w, int h){
 	__HEIGHT = h;
 
 	aspectRatio = 1.0f * (w) / h;
-	aspectRatioMenu = 1.0f * (w / 4) / h;
 }
 
 void timer(int) {
 	glutPostRedisplay();
 
-	glutTimerFunc(1000 / 60, timer, 0);
+	glutTimerFunc(1000.0f/ 60, timer, 0);
 }
 
 /* Inicializa uma tela vazia apenas com os eixos */
@@ -255,16 +382,6 @@ void initialize() {
 
 	glutSwapBuffers();
 
-	glutTimerFunc(1000/60, timer, 0);
+	glutTimerFunc(1000.0f/60, timer, 0);
 }
 
-/* Função para carregar objeto */
-void createObj(string fileName, Trio<double> color) {
-	Objeto dr;
-	
-	dr.initialize(fileName, color);
-
-	objs.push_back(dr);
-}
-
-#endif
