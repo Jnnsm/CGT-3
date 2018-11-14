@@ -19,7 +19,8 @@ int poligonos = 0;
 int deltaTime = 0;
 int menuPos = 0;
 int rotatex = 0, rotatey = 0;
-double aspect_ratio = __WIDTH / __HEIGHT;
+double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
+double aspectRatioMenu = 1.0f * (__WIDTH / 4) / __HEIGHT;
 GLdouble viewer[] = { 3.0, 3.0, 6.0 };
 
 
@@ -126,7 +127,7 @@ void objectsProjection() {
 	//Prepara tela do desenho
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(110, aspect_ratio, 1, 200);
+	gluPerspective(110, aspectRatio, 1, 200);
 	glViewport(0, 0, __WIDTH, __HEIGHT);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -135,7 +136,8 @@ void objectsProjection() {
 	gluLookAt(
 		viewer[0], viewer[1], viewer[2],
 		0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0);
+		0.0, 1.0, 0.0
+	);
 }
 
 /* Define os modos de projeção e modelview a serem seguidos na parte da tela referente a exibição do menu */
@@ -144,7 +146,7 @@ void menuProjection() {
 	
 	glLoadIdentity();
 
-	glOrtho(0, 100, 0, 200, -2, 2);
+	glOrtho(0, 200 * aspectRatioMenu, 0, 200, -2, 2);
 
 	/* Temos uma viewport de tamanho 1/4 da tela que vai da posição x = 3/4 (do tamanho total) até o final*/
 	glViewport(__WIDTH - __WIDTH / 4, 0, __WIDTH / 4, __HEIGHT);
@@ -173,7 +175,7 @@ void displayMenu() {
 
 	/* Desenhamos o background */
 	glColor4f(0.88, 0.88, 0.88, 0.60);
-	glRectd(0.0, 0, 100.0, 200.0);
+	glRectd(0.0, 0.0, 200 * aspectRatioMenu, 200.0);
 
 	/* Damos um push na matrix para não precisarmos redefinir o lookAt novamente para posição original */
 	glPushMatrix();
@@ -181,21 +183,23 @@ void displayMenu() {
 		gluLookAt(
 			0, menuPos, 1,
 			0.0, menuPos, 0.0,
-			0.0, 1.0, 0.0);
+			0.0, 1.0, 0.0
+		);
 
 		/* Desenha cada quadrado para exemplo da caixa de cada objeto */
 		glColor4f(0.5, 0, 0, 0.7);
 		for (int i = 0; i < 3; i++) {
-			glRectd(10, 200.0 - ((i + 1) * 35 - 5), 90, 200.0 - ((i) * 35));
+			glRectd(1.0f * 20/3, 200.0 - ((i + 1) * 35 - 5), 60, 200.0 - ((i) * 35));
 		}
 
 	glPopMatrix();
 
+	/* Escreve a quantidade de tempo para desenhar e a quantidade de poligonos na parte de baixo da tela */
 	glPushMatrix();
 
 		glColor4d(0, 0, 0, 1);
-		glScaled(0.05, 0.05, 0);
-		glTranslated(55, 45, 0);
+		glTranslated(20.0f/3, 1, 0);
+		glScaled(0.035, 0.035, 0);
 
 		stringstream ss;
 		ss << deltaTime;
@@ -231,7 +235,8 @@ void reshape(int w, int h){
 	__WIDTH = w;
 	__HEIGHT = h;
 
-	aspect_ratio = 1.0f * (w) / h;
+	aspectRatio = 1.0f * (w) / h;
+	aspectRatioMenu = 1.0f * (w / 4) / h;
 }
 
 void timer(int) {
