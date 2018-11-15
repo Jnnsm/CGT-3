@@ -37,11 +37,9 @@
     <Media Include="Teapot.obj">
       <Filter>Resource Files</Filter>
     </Media>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="Gabumon.obj">
+    <Media Include="Gabumon.obj">
       <Filter>Resource Files</Filter>
-    </Object>
+    </Media>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

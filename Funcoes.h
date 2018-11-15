@@ -29,12 +29,16 @@ string nameBox = "";
 bool typing = false;
 
 /* Função para carregar objeto */
-void createObj(string fileName, Trio<double> color) {
+void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
 
-	dr.initialize(fileName, color);
-
-	objs.push_back(dr);
+	try {
+		dr.initialize(fileName, color);
+		objs.push_back(dr);
+	}
+	catch (int e) {
+		cerr << "File does not exist" << endl;
+	}
 }
 
 #endif
@@ -47,7 +51,7 @@ void keyboard(unsigned char key, int x, int y) {
 	if (typing) {
 		if (key == 13) {
 			typing = false;
-			Trio<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
+			Quad<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), 0.5);
 			createObj(nameBox, aux);
 			nameBox = "";
 			return;
@@ -147,7 +151,7 @@ void showObjects() {
 			glRotatef(rotatex, 0, 1, 0);
 			glRotatef(rotatey, 1, 0, 0);
 
-			glColor4f((*o).cor.primeiro, (*o).cor.segundo, (*o).cor.terceiro, (*o).alpha);
+			glColor4f((*o).rgba.primeiro, (*o).rgba.segundo, (*o).rgba.terceiro, (*o).rgba.quarto);
 			glBegin(GL_TRIANGLES);
 			for (int i = 0; i < (*o).f.size(); i++) {
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço */
@@ -267,57 +271,75 @@ void displayMenu() {
 		);
 
 		/* Desenha cada quadrado para exemplo da caixa de cada objeto */
+		int pos = 0;
 		for (int i = 0; i < objs.size(); i++) {
-			glColor4f(objs.at(i).cor.primeiro, objs.at(i).cor.segundo, objs.at(i).cor.terceiro, 0.7);
-			glRectd(20.0f/3, 180 - ((i + 1) * 35), 60, 180 - ((i) * 35 + 5));
+			pos = i * 40;
+			/* Desenha caixa de fundo com a cor do objeto */
+			glColor4f(objs.at(i).rgba.primeiro, objs.at(i).rgba.segundo, objs.at(i).rgba.terceiro, 0.7);
+			glRectd(20.0f/3, 180 - pos - 40, 60, 180 - (pos + 5));
 
 			glColor4f(0, 0, 0, 1);
 
+			/* Desenha o nome do objeto */
 			glPushMatrix();
 
-				glTranslated(23.0f / 3, 175 - ((i) * 35 + 5), 0);
+				glTranslated(23.0f / 3, 175 - pos - 5, 0);
 				glScaled(0.035, 0.035, 0);
 				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(objs.at(i).name).c_str());
 
 			glPopMatrix();
 
+			/* Desenha as caixas relacionadas com translação e seu label */
 			glPushMatrix();
 
-				glTranslated(23.0f / 3, 168 - ((i) * 35 + 5), 0);
+				glTranslated(23.0f / 3, 168 - (pos + 5), 0);
 				glScaled(0.035, 0.035, 0);
 				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"T: ");
 
 			glPopMatrix();
 
 			
-			glRectd(24, 168 - ((i) * 35) ,34, 168 - ((i) * 35 + 5));
-			glRectd(36, 168 - ((i) * 35) ,46, 168 - ((i) * 35 + 5));
-			glRectd(48, 168 - ((i) * 35) ,58, 168 - ((i) * 35 + 5));
+			glRectd(24, 168 - pos, 34, 168 - (pos + 5));
+			glRectd(36, 168 - pos, 46, 168 - (pos + 5));
+			glRectd(48, 168 - pos, 58, 168 - (pos + 5));
 
+			/* Desenha as caixas relacionadas com rotação e seu label */
 			glPushMatrix();
 
-				glTranslated(23.0f / 3, 161 - ((i) * 35 + 5), 0);
+				glTranslated(23.0f / 3, 161 - (pos + 5), 0);
 				glScaled(0.035, 0.035, 0);
 				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"R: ");
 
 			glPopMatrix();
 
-			glRectd(12, 161 - ((i) * 35), 22, 161 - ((i) * 35 + 5));
-			glRectd(24, 161 - ((i) * 35), 34, 161 - ((i) * 35 + 5));
-			glRectd(36, 161 - ((i) * 35), 46, 161 - ((i) * 35 + 5));
-			glRectd(48, 161 - ((i) * 35), 58, 161 - ((i) * 35 + 5));
+			glRectd(12, 161 - (pos), 22, 161 - (pos + 5));
+			glRectd(24, 161 - (pos), 34, 161 - (pos + 5));
+			glRectd(36, 161 - (pos), 46, 161 - (pos + 5));
+			glRectd(48, 161 - (pos), 58, 161 - (pos + 5));
 
+			/* Desenha as caixas relacionadas com escala e seu label */
 			glPushMatrix();
 
-				glTranslated(23.0f / 3, 154 - ((i) * 35 + 5), 0);
+				glTranslated(23.0f / 3, 154 - (pos + 5), 0);
 				glScaled(0.035, 0.035, 0);
 				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"E: ");
 
 			glPopMatrix();
 
-			glRectd(24, 154 - ((i) * 35), 34, 154 - ((i) * 35 + 5));
-			glRectd(36, 154 - ((i) * 35), 46, 154 - ((i) * 35 + 5));
-			glRectd(48, 154 - ((i) * 35), 58, 154 - ((i) * 35 + 5));
+			glRectd(24, 154 - pos, 34, 154 - (pos + 5));
+			glRectd(36, 154 - pos, 46, 154 - (pos + 5));
+			glRectd(48, 154 - pos, 58, 154 - (pos + 5));
+
+			/* Desenha as caixas relacionadas com transparencia e seu label */
+			glPushMatrix();
+
+				glTranslated(23.0f / 3, 147 - (pos + 5), 0);
+				glScaled(0.035, 0.035, 0);
+				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"Alpha: ");
+
+			glPopMatrix();
+
+			glRectd(48, 147 - pos, 58, 147 - (pos + 5));
 
 		}
 

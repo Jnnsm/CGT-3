@@ -14,10 +14,10 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	/* Cria 2 objetos que são carregados de maneira paralela */
-	Trio<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
+	Quad<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), 0.5);
 	createObj("Dragon.obj", aux);
 
-	aux.altera((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX));
+	aux.altera((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), 0.5);
 	createObj("Teapot.obj", aux);
 	
 	glutInit(&argc, argv);

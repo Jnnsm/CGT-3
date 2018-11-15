@@ -67,12 +67,6 @@ public:
 
 };
 
-template<class T>
-ostream & operator << (ostream &cout, const Duo<T>& t) {
-	cout << "(" << t.primeiro << ", " << t.segundo << ")";
-	return cout;
-}
-
 /* Classe para variáveis triplas */
 
 template<class T>
@@ -100,19 +94,43 @@ public:
 	}
 };
 
+/* Classe para variáveis quadruplas */
+
 template<class T>
-ostream & operator << (ostream &cout, const Trio<T>& t) {
-	cout << "(" << t.primeiro << ", " << t.segundo << ", " << t.terceiro << ") ";
-	return cout;
-}
+class Quad {
+	friend ostream & operator << (ostream &cout, const Quad<T>& t) {
+		cout << "(" << t.primeiro << ", " << t.segundo << ", " << t.terceiro << ", " << t.quarto << ") ";
+		return cout;
+	}
+public:
+	T primeiro;
+	T segundo;
+	T terceiro;
+	T quarto;
+
+	Quad() {}
+	Quad(T p, T s, T t, T q) {
+		primeiro = p;
+		segundo = s;
+		terceiro = t;
+		quarto = q;
+	}
+
+	void altera(T p, T s, T t, T q) {
+		primeiro = p;
+		segundo = s;
+		terceiro = t;
+		quarto = q;
+	}
+};
+
 
 /* Classe para um objeto completo */
 
 class Objeto {
 public:
 	/* Variáveis relacionadas com o objeto */
-	Trio<double> cor;
-	double alpha;
+	Quad<double> rgba;
 
 	/* Variáveis relacionadas com o arquivo */
 	string name;
@@ -127,26 +145,16 @@ public:
 		/* Nao faz nada */
 	}
 	Objeto(string fileName) {
-		/* Preenche os vetores */ 
-		name = fileName;
-		read(fileName);
-		/* Ccoloca o objeto sólido */
-		alpha = 0.5;
+		initialize(fileName);
 	}
-	Objeto(string fileName, Trio<double> rgb) {
-		/* Preenche os vetores */
-		name = fileName;
-		read(fileName);
-		/* Altera a cor e coloca o objeto sólido */
-		alpha = 0.5;
-		cor.altera(rgb.primeiro, rgb.segundo, rgb.terceiro);
+	Objeto(string fileName, Quad<double> rgba) {
+		initialize(fileName, rgba);
 	}
 
 	/* Limpa o objeto */
 	void eraseData() {
 		name = "";
-		alpha = 1;
-		cor.altera(0,0,0);
+		rgba.altera(0,0,0,1);
 
 		mtl = "";
 		s = false;
@@ -160,39 +168,40 @@ public:
 
 	/* Preenche o objeto */
 	void initialize(string fileName) {
-		
 		eraseData();
 		name = fileName;
 		read(fileName);
-
-		alpha = 0.5;
 	}
 
 	/* Preenche o objeto e adiciona cor */
-	void initialize(string fileName, Trio<double> rgb) {
+	void initialize(string fileName, Quad<double> rgba) {
 
 		eraseData();
 		name = fileName;
 		read(fileName);
 
-		alpha = 0.5;
-		cor.altera(rgb.primeiro, rgb.segundo, rgb.terceiro);
+		this->rgba.altera(rgba.primeiro, rgba.segundo, rgba.terceiro, rgba.quarto);
 	}
 
 	/* Lê do arquivo o objeto */
 	void read(string fileName) {
-		// Variáveis para auxilio do preenchimento
+
+		/* Variáveis para auxilio do preenchimento */
 		fstream file;
 		string line;
 		vector<string> aux;
 
-		// Variáveis que guardam os valores do arquivo enquanto são lidas
+		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
 
 		Trio<double> Taux;
 		Duo<double> Daux;
 		Trio<Duo<double>> TDaux;
 
 		file.open(fileName.c_str(), fstream::in | fstream::binary);
+
+		/* Checa se o arquivo existe de fato */
+		if (!file.good())
+			throw 1;
 		
 		while (getline(file, line, ' ')) {
 			if (line[0] == '#')
