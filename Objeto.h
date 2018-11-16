@@ -131,6 +131,9 @@ class Objeto {
 public:
 	/* Variáveis relacionadas com o objeto */
 	Quad<double> rgba;
+	Trio<double> translate;
+	Quad<double> rotate;
+	Trio<double> scale;
 
 	/* Variáveis relacionadas com o arquivo */
 	string name;
@@ -153,6 +156,11 @@ public:
 
 	/* Limpa o objeto */
 	void eraseData() {
+
+		translate.altera(0, 0, 0);
+		rotate.altera(0, 0, 0, 0);
+		scale.altera(0, 0, 0);
+
 		name = "";
 		rgba.altera(0,0,0,1);
 
@@ -204,6 +212,7 @@ public:
 			throw 1;
 		
 		while (getline(file, line, ' ')) {
+			
 			if (line[0] == '#')
 				getline(file, line);
 			else {

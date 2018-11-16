@@ -44,4 +44,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="buda.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="buddha.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+  </ItemGroup>
 </Project>

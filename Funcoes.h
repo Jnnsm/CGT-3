@@ -21,9 +21,6 @@ int poly = 0,
 /* Representa o scroll do menu */
 int menuPos = 0;
 
-/* Variável teste para rotação */
-int rotatex = 0, rotatey = 0;
-
 /* Aspect Rato da tela e posição do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
 GLdouble viewer[] = { 3.0, 3.0, 6.0 };
@@ -59,7 +56,6 @@ void createObj(string fileName, Quad<double> color) {
 /* w - a - s - d = comandos que movem os objetos */
 
 void keyboard(unsigned char key, int x, int y) {
-	cout << x << " " << y << endl;
 	if (clickedObj == -1 && typingField == 0) {
 		if (key == 13) {
 			clickedObj = -1;
@@ -85,16 +81,18 @@ void keyboard(unsigned char key, int x, int y) {
 				menuPos++;
 				break;
 			case 'a':
-				rotatex--;
+				if(clickedObj >= 0)
+					objs.at(clickedObj).rotate.primeiro--;
 				break;
 			case 'd':
-				rotatex++;
+				if (clickedObj >= 0)
+					objs.at(clickedObj).rotate.primeiro++;
 				break;
 			case 's':
-				rotatey--;
+				//rotatey--;
 				break;
 			case 'w':
-				rotatey++;
+				//rotatey++;
 				break;
 		}
 	}
@@ -117,13 +115,91 @@ void mouse(int button, int state, int x, int y) {
 			yf = (200) * (__HEIGHT - y) / __HEIGHT;
 
 			/* Descobre qual caixa o usuário clicou */
-			cout << trunc(((yf - 140 + menuPos) / -40)+0.99) << endl;
+			/*cout << yf << " ";
+			cout << ((yf - 140 + menuPos) / -40)+0.875 << endl;*/
 
 			/* Checa se ele está clicando na caixa de importação */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
 				clickedObj = -1;
 				typingField = 0;
 			}
+			/* Se for clicado em alguma caixa de algum objeto*/
+			else if (xf >= 20.0f / 3 && xf <= 60 && yf <= 175) {
+				/* Calcula pelo ortho e pelo movimento do menu qual objeto foi clicado */
+				double aux = ((yf - 140 + menuPos) / -40) + 0.875;
+
+				if (trunc(aux) == trunc(aux + 0.125) && aux < objs.size()) {
+					clickedObj = trunc(aux);
+				
+
+					/* Está na 'caixa' em x que envolve todas as caixas menores de rotação, translação, etc... */
+					
+					/* Checa em qual coluna está (da esquerda para a direita) e dentro checa em qual linha */
+					if (xf >= 12 && xf <= 22) {
+
+						if (yf >= 161 - (clickedObj * 40 + 5) && yf <= 161 - (clickedObj * 40)) {
+							typingField = 3;
+						}
+						else {
+							typingField = -1;
+						}
+					}
+					else if (xf >= 24 && xf <= 34) {
+						if (yf >= 168 - (clickedObj * 40 + 5) - menuPos && yf <= 168 - (clickedObj * 40) - menuPos ) {
+							typingField = 0;
+						}
+						else if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos ) {
+							typingField = 4;
+						}
+						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
+							typingField = 7;
+						}
+						else {
+							typingField = -1;
+						}
+					}
+					else if (xf >= 36 && xf <= 46) {
+						if (yf >= 168 - (clickedObj * 40 + 5) - menuPos && yf <= 168 - (clickedObj * 40) - menuPos) {
+							typingField = 1;
+						}
+						else if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos) {
+							typingField = 5;
+						}
+						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
+							typingField = 8;
+						}
+						else {
+							typingField = -1;
+						}
+					}
+					else if (xf >= 48 && xf <= 58) {
+						if (yf >= 168 - (clickedObj * 40 + 5) - menuPos && yf <= 168 - (clickedObj * 40) - menuPos) {
+							typingField = 2;
+						}
+						else if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos) {
+							typingField = 6;
+						}
+						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
+							typingField = 9;
+						}
+						else if (yf >= 147 - (clickedObj * 40 + 5) - menuPos && yf <= 147 - (clickedObj * 40) - menuPos) {
+							typingField = 10;
+						}
+						else {
+							typingField = -1;
+						}
+					}
+					else {
+						typingField = -1;
+					}
+				}
+				
+				else {
+					clickedObj = -1;
+					typingField = -1;
+				}
+			}
+			/* Se clicou diretamente fora */
 			else if (clickedObj >= 0 || typingField >= 0) {
 				clickedObj = -1;
 				typingField = -1;
@@ -134,9 +210,6 @@ void mouse(int button, int state, int x, int y) {
 	else {
 
 	}
-
-
-
 }
 
 /* Desenha os eixos XYZ */
@@ -170,8 +243,8 @@ void showObjects() {
 		poly += (*o).f.size();
 		glPushMatrix();
 
-			glRotatef(rotatex, 0, 1, 0);
-			glRotatef(rotatey, 1, 0, 0);
+			glRotatef((*o).rotate.primeiro, 0, 1, 0);
+			//glRotatef((*o).rotate.primeiro, 1, 0, 0);
 
 			glColor4f((*o).rgba.primeiro, (*o).rgba.segundo, (*o).rgba.terceiro, (*o).rgba.quarto);
 			glBegin(GL_TRIANGLES);
@@ -281,7 +354,12 @@ void displayMenu() {
 			/* Desenha apenas se ele estiver a baixo da barra que importa objetos */
 			if (180 - pos - 40 - menuPos <= 180) {
 				/* Desenha caixa de fundo com a cor do objeto */
-				glColor4f(objs.at(i).rgba.primeiro, objs.at(i).rgba.segundo, objs.at(i).rgba.terceiro, 0.7);
+				
+				if(clickedObj != i)
+					glColor4f(objs.at(i).rgba.primeiro, objs.at(i).rgba.segundo, objs.at(i).rgba.terceiro, 0.4);
+				else {
+					glColor4f(objs.at(i).rgba.primeiro, objs.at(i).rgba.segundo, objs.at(i).rgba.terceiro, 1);
+				}
 				glRectd(20.0f / 3, 180 - pos - 40, 60, 180 - (pos + 5));
 
 				glColor4f(0, 0, 0, 1);
@@ -289,25 +367,25 @@ void displayMenu() {
 				/* Desenha o nome do objeto */
 				glPushMatrix();
 
-				glTranslated(23.0f / 3, 175 - pos - 5, 0);
-				glScaled(0.035, 0.035, 0);
-				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(objs.at(i).name).c_str());
+					glTranslated(23.0f / 3, 175 - pos - 5, 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(objs.at(i).name).c_str());
 
 				glPopMatrix();
 
 				/* Desenha as caixas relacionadas com translação e seu label */
 				glPushMatrix();
 
-				glTranslated(23.0f / 3, 168 - (pos + 5), 0);
-				glScaled(0.035, 0.035, 0);
-				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"T: ");
+					glTranslated(23.0f / 3, 168 - (pos + 5), 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"T: ");
 
 				glPopMatrix();
 
-
-				glRectd(24, 168 - pos, 34, 168 - (pos + 5));
-				glRectd(36, 168 - pos, 46, 168 - (pos + 5));
-				glRectd(48, 168 - pos, 58, 168 - (pos + 5));
+				//glRectd(24, 168 - pos, 34, 168 - (pos + 5));
+				glRectd(24, 168 - pos - 5, 34, 168 - pos);
+				glRectd(36, 168 - pos - 5, 46, 168 - pos);
+				glRectd(48, 168 - pos - 5, 58, 168 - pos);
 
 				/* Desenha as caixas relacionadas com rotação e seu label */
 				glPushMatrix();
@@ -318,34 +396,34 @@ void displayMenu() {
 
 				glPopMatrix();
 
-				glRectd(12, 161 - (pos), 22, 161 - (pos + 5));
-				glRectd(24, 161 - (pos), 34, 161 - (pos + 5));
-				glRectd(36, 161 - (pos), 46, 161 - (pos + 5));
-				glRectd(48, 161 - (pos), 58, 161 - (pos + 5));
+				glRectd(24, 161 - pos - 5, 34, 161 - pos);
+				glRectd(12, 161 - pos - 5, 22, 161 - pos);
+				glRectd(36, 161 - pos - 5, 46, 161 - pos);
+				glRectd(48, 161 - pos - 5, 58, 161 - pos);
 
 				/* Desenha as caixas relacionadas com escala e seu label */
 				glPushMatrix();
 
-				glTranslated(23.0f / 3, 154 - (pos + 5), 0);
-				glScaled(0.035, 0.035, 0);
-				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"E: ");
+					glTranslated(23.0f / 3, 154 - (pos + 5), 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"E: ");
 
 				glPopMatrix();
 
-				glRectd(24, 154 - pos, 34, 154 - (pos + 5));
-				glRectd(36, 154 - pos, 46, 154 - (pos + 5));
-				glRectd(48, 154 - pos, 58, 154 - (pos + 5));
+				glRectd(24, 154 - pos - 5, 34, 154 - pos);
+				glRectd(36, 154 - pos - 5, 46, 154 - pos);
+				glRectd(48, 154 - pos - 5, 58, 154 - pos);
 
 				/* Desenha as caixas relacionadas com transparencia e seu label */
 				glPushMatrix();
 
-				glTranslated(23.0f / 3, 147 - (pos + 5), 0);
-				glScaled(0.035, 0.035, 0);
-				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"Alpha: ");
+					glTranslated(23.0f / 3, 147 - (pos + 5), 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"Alpha: ");
 
 				glPopMatrix();
 
-				glRectd(48, 147 - pos, 58, 147 - (pos + 5));
+				glRectd(48, 147 - pos - 5, 58, 147 - pos);
 			}
 		}
 
