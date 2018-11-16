@@ -12,13 +12,6 @@ double __WIDTH = 800, __HEIGHT = 600;
 
 int main(int argc, char **argv) {
 	srand(time(NULL));
-
-	/* Cria 2 objetos que são carregados de maneira paralela */
-	//Quad<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), 0.5);
-	//createObj("buda.obj", aux);
-
-	//aux.altera((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), 0.5);
-	//createObj("Teapot.obj", aux);
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);

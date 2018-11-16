@@ -39,7 +39,7 @@ short clickedObj = -1, typingField = -1;
 /* Função para carregar objeto */
 void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
-
+	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 	try {
 		dr.initialize(fileName, color);
 		objs.push_back(dr);
@@ -47,6 +47,7 @@ void createObj(string fileName, Quad<double> color) {
 	catch (int e) {
 		cerr << "File does not exist" << endl;
 	}
+	cout << glutGet(GLUT_ELAPSED_TIME) - timeStart << endl;
 }
 
 #endif
@@ -56,7 +57,9 @@ void createObj(string fileName, Quad<double> color) {
 /* w - a - s - d = comandos que movem os objetos */
 
 void keyboard(unsigned char key, int x, int y) {
+	/* Quer digitar o nome de um novo objeto */
 	if (clickedObj == -1 && typingField == 0) {
+		/* Apertou enter para inserir o objeto */
 		if (key == 13) {
 			clickedObj = -1;
 			typingField = -1;
@@ -65,12 +68,18 @@ void keyboard(unsigned char key, int x, int y) {
 			nameBox = "";
 			return;
 		}
+		/* Apertou backspace */
 		else if (key == 8) {
 			if(nameBox.size() > 0)
 				nameBox.pop_back();
 		}
 		else
 			nameBox += key;
+	}
+	/* Pressionou delete */
+	else if (clickedObj >= 0 && key == 127 && typingField == -1) {
+		objs.erase(objs.begin()+clickedObj);
+		clickedObj = -1;
 	}
 	else {
 		switch (key) {
@@ -322,6 +331,20 @@ void displayObjects() {
 	showObjects();
 }
 
+/* Função feita para desenhar algo do tipo: "Label: *" onde * são n caixas*/
+void drawBoxAndLabel(double startX, double endX, double startY, double endY, string label, int quantity) {
+	glPushMatrix();
+
+		glTranslated(startX, startY, 0);
+		glScaled(0.035, 0.035, 0);
+		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)label.c_str());
+
+	glPopMatrix();
+
+	for (int i = endX - 2; i >= 0 && quantity > 0; i -= 12, quantity--) {
+		glRectd(i-10, startY, i, endY);
+	}
+}
 
 /* Chama o necessário para construir o menu*/
 void displayMenu() {
@@ -374,56 +397,19 @@ void displayMenu() {
 				glPopMatrix();
 
 				/* Desenha as caixas relacionadas com translação e seu label */
-				glPushMatrix();
 
-					glTranslated(23.0f / 3, 168 - (pos + 5), 0);
-					glScaled(0.035, 0.035, 0);
-					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"T: ");
-
-				glPopMatrix();
-
-				//glRectd(24, 168 - pos, 34, 168 - (pos + 5));
-				glRectd(24, 168 - pos - 5, 34, 168 - pos);
-				glRectd(36, 168 - pos - 5, 46, 168 - pos);
-				glRectd(48, 168 - pos - 5, 58, 168 - pos);
+				drawBoxAndLabel(23.0f / 3, 60, 168 - (pos + 5), 168 - pos, "T: ", 3);
 
 				/* Desenha as caixas relacionadas com rotação e seu label */
-				glPushMatrix();
 
-				glTranslated(23.0f / 3, 161 - (pos + 5), 0);
-				glScaled(0.035, 0.035, 0);
-				glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"R: ");
-
-				glPopMatrix();
-
-				glRectd(24, 161 - pos - 5, 34, 161 - pos);
-				glRectd(12, 161 - pos - 5, 22, 161 - pos);
-				glRectd(36, 161 - pos - 5, 46, 161 - pos);
-				glRectd(48, 161 - pos - 5, 58, 161 - pos);
+				drawBoxAndLabel(23.0f / 3, 60, 161 - (pos + 5), 161 - pos, "R: ", 4);
 
 				/* Desenha as caixas relacionadas com escala e seu label */
-				glPushMatrix();
-
-					glTranslated(23.0f / 3, 154 - (pos + 5), 0);
-					glScaled(0.035, 0.035, 0);
-					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"E: ");
-
-				glPopMatrix();
-
-				glRectd(24, 154 - pos - 5, 34, 154 - pos);
-				glRectd(36, 154 - pos - 5, 46, 154 - pos);
-				glRectd(48, 154 - pos - 5, 58, 154 - pos);
+				drawBoxAndLabel(23.0f / 3, 60, 154 - (pos + 5), 154 - pos, "E: ", 3);
 
 				/* Desenha as caixas relacionadas com transparencia e seu label */
-				glPushMatrix();
 
-					glTranslated(23.0f / 3, 147 - (pos + 5), 0);
-					glScaled(0.035, 0.035, 0);
-					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"Alpha: ");
-
-				glPopMatrix();
-
-				glRectd(48, 147 - pos - 5, 58, 147 - pos);
+				drawBoxAndLabel(23.0f / 3, 60, 147 - (pos + 5), 147 - pos, "Alpha: ", 1);
 			}
 		}
 

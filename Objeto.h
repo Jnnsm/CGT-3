@@ -212,72 +212,67 @@ public:
 			throw 1;
 		
 		while (getline(file, line, ' ')) {
-			
-			if (line[0] == '#')
+			if (line == "usemtl" || line == "mtllib") {
 				getline(file, line);
-			else {
-				if (line == "usemtl" || line == "mtllib") {
-					getline(file, line);
-					mtl = split(line, "()").at(0);
-				}
-				else {
-					if (line[0] == 's') {
-						getline(file, line);
-						if (line == "0" || line == "off")
-							s = false;
-						else
-							s = true;
-					}
-					else {
-						if (line == "v") {
-							getline(file, line, ' ');
-							istringstream(line) >> Taux.primeiro;
-							getline(file, line, ' ');
-							istringstream(line) >> Taux.segundo;
-							getline(file, line);
-							istringstream(line) >> Taux.terceiro;
-							v.push_back(Taux);
-						}
-						else if (line == "vn") {
-							getline(file, line, ' ');
-							istringstream(line) >> Taux.primeiro;
-							getline(file, line, ' ');
-							istringstream(line) >> Taux.segundo;
-							getline(file, line);
-							istringstream(line) >> Taux.terceiro;
-							vn.push_back(Taux);
-						}
-						else if (line == "vt") {
-							getline(file, line, ' ');
-							istringstream(line) >> Daux.primeiro;
-							getline(file, line);
-							istringstream(line) >> Daux.segundo;
-							vt.push_back(Daux);
-						}
-						else if (line == "f") {
-							getline(file, line, '/');
-							istringstream(line) >> TDaux.primeiro.primeiro;
-							getline(file, line, ' ');
-							istringstream(line) >> TDaux.primeiro.segundo;
-
-							getline(file, line, '/');
-							istringstream(line) >> TDaux.segundo.primeiro;
-							getline(file, line, ' ');
-							istringstream(line) >> TDaux.segundo.segundo;
-
-							getline(file, line, '/');
-							istringstream(line) >> TDaux.terceiro.primeiro;
-							getline(file, line);
-							istringstream(line) >> TDaux.terceiro.segundo;
-
-							f.push_back(TDaux);
-						}
-					}
-				}
+				mtl = split(line, "()").at(0);
 			}
+
+			else if (line == "s") {
+				getline(file, line);
+				if (line == "0" || line == "off")
+					s = false;
+				else
+					s = true;
+			}
+			else if (line == "v") {
+				getline(file, line, ' ');
+				istringstream(line) >> Taux.primeiro;
+				getline(file, line, ' ');
+				istringstream(line) >> Taux.segundo;
+				getline(file, line);
+				istringstream(line) >> Taux.terceiro;
+				v.push_back(Taux);
+			}
+			else if (line == "vn") {
+				getline(file, line, ' ');
+				istringstream(line) >> Taux.primeiro;
+				getline(file, line, ' ');
+				istringstream(line) >> Taux.segundo;
+				getline(file, line);
+				istringstream(line) >> Taux.terceiro;
+				vn.push_back(Taux);
+			}
+			else if (line == "vt") {
+				getline(file, line, ' ');
+				istringstream(line) >> Daux.primeiro;
+				getline(file, line);
+				istringstream(line) >> Daux.segundo;
+				vt.push_back(Daux);
+			}
+			else if (line == "f") {
+				getline(file, line, '/');
+				istringstream(line) >> TDaux.primeiro.primeiro;
+				getline(file, line, ' ');
+				istringstream(line) >> TDaux.primeiro.segundo;
+
+				getline(file, line, '/');
+				istringstream(line) >> TDaux.segundo.primeiro;
+				getline(file, line, ' ');
+				istringstream(line) >> TDaux.segundo.segundo;
+
+				getline(file, line, '/');
+				istringstream(line) >> TDaux.terceiro.primeiro;
+				getline(file, line);
+				istringstream(line) >> TDaux.terceiro.segundo;
+
+				f.push_back(TDaux);
+			}
+			else
+				getline(file, line);
 		}
 		file.close();
 	}
+
 
 	~Objeto() {
 		eraseData();
