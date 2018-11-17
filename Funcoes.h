@@ -24,9 +24,12 @@ int menuPos = 0;
 
 /* Aspect Rato da tela e posi��o do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
-GLdouble viewer[] = { 0.0, 0.0, 6.0 };
+GLdouble viewer[] = { 3.0, 3.0, 6.0 };
 GLdouble lookPoint[] = { 0.0, 0.0, 0.0 };
 GLdouble upVector[] = { 0.0, 1.0, 0.0 };
+
+/* Modo de exibição do objeto */
+GLint viewMode = GL_TRIANGLES;
 
 /* String digitada na caixa de importa��o do objeto */
 string nameBox = "", valueBox = "";
@@ -146,6 +149,12 @@ void keyboard(unsigned char key, int x, int y) {
 		GLdouble u[] = { 0.0, 0.0, 0.0 };
 		GLdouble norm;
 		switch (key) {
+			case 'v': 
+				if(viewMode == GL_TRIANGLES)
+					viewMode = GL_LINES;
+				else
+					viewMode = GL_TRIANGLES;
+				break;
 			case 'i':
 				menuPos--;
 				break;
@@ -436,7 +445,7 @@ void showObjects() {
 			glRotatef((*o).rotate.data[0], (*o).rotate.data[1], (*o).rotate.data[2], (*o).rotate.data[3]);
 
 			glColor4f((*o).rgba.data[0], (*o).rgba.data[1], (*o).rgba.data[2], (*o).rgba.data[3]);
-			glBegin(GL_TRIANGLES);
+			glBegin(viewMode);
 			for (int i = 0; i < (*o).f.size(); i++) {
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
 				glVertex3f(

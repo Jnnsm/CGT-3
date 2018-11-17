@@ -6,12 +6,15 @@
 
 using namespace std;
 
-/* Vector com vários objetos a serem desenhados */
+/* Vector com vï¿½rios objetos a serem desenhados */
 vector<Objeto> objs;
 double __WIDTH = 800, __HEIGHT = 600;
 
 int main(int argc, char **argv) {
 	srand(time(NULL));
+
+	Quad<double> cor(0,0,1,1);
+	createObj("Teapot.obj", cor );
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -28,7 +31,7 @@ int main(int argc, char **argv) {
 	glutDisplayFunc(display);
 	
 
-	/* Ativa suavizações, canal alfa e teste de profundidade */
+	/* Ativa suavizaï¿½ï¿½es, canal alfa e teste de profundidade */
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
