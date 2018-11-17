@@ -39,7 +39,6 @@ short clickedObj = -1, typingField = -1;
 /* Função para carregar objeto */
 void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
-	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 	try {
 		dr.initialize(fileName, color);
 		objs.push_back(dr);
@@ -47,7 +46,6 @@ void createObj(string fileName, Quad<double> color) {
 	catch (int e) {
 		cerr << "File does not exist" << endl;
 	}
-	cout << glutGet(GLUT_ELAPSED_TIME) - timeStart << endl;
 }
 
 #endif
@@ -57,7 +55,6 @@ void createObj(string fileName, Quad<double> color) {
 /* w - a - s - d = comandos que movem os objetos */
 
 void keyboard(unsigned char key, int x, int y) {
-	cout << clickedObj << " " << typingField << endl;
 	/* Quer digitar o nome de um novo objeto */
 	if (clickedObj == -1 && typingField == 0) {
 		/* Apertou enter para inserir o objeto */
@@ -181,8 +178,6 @@ void mouse(int button, int state, int x, int y) {
 			yf = (200) * (__HEIGHT - y) / __HEIGHT;
 
 			/* Descobre qual caixa o usuário clicou */
-			/*cout << yf << " ";
-			cout << ((yf - 140 + menuPos) / -40)+0.875 << endl;*/
 
 			/* Checa se ele está clicando na caixa de importação */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
