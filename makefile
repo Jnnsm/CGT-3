@@ -15,7 +15,7 @@ endif
 all: $(OBJ)
 	$(CC)  $(OBJ) $(CFLAGS) -o $(OBJ_NAME)
 
-Main.o: Main.cpp Objeto.h
+Main.o: Main.cpp Objeto.h Funcoes.h
 	$(CC) -c Main.cpp $(CFLAGS)
 
 .PHONY: clean clobber
