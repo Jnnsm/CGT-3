@@ -155,7 +155,7 @@ public:
 
 		translate.altera(0, 0, 0);
 		rotate.altera(0, 0, 0, 0);
-		scale.altera(0, 0, 0);
+		scale.altera(1, 1, 1);
 
 		name = "";
 		rgba.altera(0,0,0,1);

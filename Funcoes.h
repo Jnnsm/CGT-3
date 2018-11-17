@@ -26,7 +26,7 @@ double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
 GLdouble viewer[] = { 3.0, 3.0, 6.0 };
 
 /* String digitada na caixa de importação do objeto */
-string nameBox = "";
+string nameBox = "", valueBox = "";
 
 /* Identificadores para saber se o usuário está digitando						*/
 /* clickedObj = -1 representa a tela de menu inteira							*/
@@ -57,6 +57,7 @@ void createObj(string fileName, Quad<double> color) {
 /* w - a - s - d = comandos que movem os objetos */
 
 void keyboard(unsigned char key, int x, int y) {
+	cout << clickedObj << " " << typingField << endl;
 	/* Quer digitar o nome de um novo objeto */
 	if (clickedObj == -1 && typingField == 0) {
 		/* Apertou enter para inserir o objeto */
@@ -81,30 +82,86 @@ void keyboard(unsigned char key, int x, int y) {
 		objs.erase(objs.begin()+clickedObj);
 		clickedObj = -1;
 	}
-	else {
-		switch (key) {
-			case 'i':
-				menuPos--;
-				break;
-			case 'k':
-				menuPos++;
-				break;
-			case 'a':
-				if(clickedObj >= 0)
-					objs.at(clickedObj).rotate.data[0]--;
-				break;
-			case 'd':
-				if (clickedObj >= 0)
-					objs.at(clickedObj).rotate.data[0]++;
-				break;
-			case 's':
-				//rotatey--;
-				break;
-			case 'w':
-				//rotatey++;
-				break;
+	else if(clickedObj >= 0 && typingField >= 0){
+		if (key == 13) {
+
+			stringstream ss;
+			ss << valueBox;
+			valueBox = "";
+			switch (typingField) {
+				/* Translate */
+				case 0:
+					ss >> objs.at(clickedObj).translate.data[0];
+					break;
+				case 1:
+					ss >> objs.at(clickedObj).translate.data[1];
+					break;
+				case 2:
+					ss >> objs.at(clickedObj).translate.data[2];
+					break;
+				/* Rotate */
+				case 3:
+					ss >> objs.at(clickedObj).rotate.data[0];
+					break;
+				case 4:
+					ss >> objs.at(clickedObj).rotate.data[1];
+					break;
+				case 5:
+					ss >> objs.at(clickedObj).rotate.data[2];
+					break;
+				case 6:
+					ss >> objs.at(clickedObj).rotate.data[3];
+					break;
+				/* Scale */
+				case 7:
+					ss >> objs.at(clickedObj).scale.data[0];
+					break;
+				case 8:
+					ss >> objs.at(clickedObj).scale.data[1];
+					break;
+				case 9:
+					ss >> objs.at(clickedObj).scale.data[2];
+					break;
+				/* Alpha */
+				case 10:
+					ss >> objs.at(clickedObj).rgba.data[3];
+					break;
+			}
+			return;
 		}
+		/* Apertou backspace */
+		else if (key == 8) {
+			if (nameBox.size() > 0)
+				valueBox.pop_back();
+		}
+		else
+			valueBox += key;
+
 	}
+	/*else {
+		switch (key) {
+		case 'i':
+			menuPos--;
+			break;
+		case 'k':
+			menuPos++;
+			break;
+		case 'a':
+			if(clickedObj >= 0)
+				objs.at(clickedObj).rotate.data[0]--;
+			break;
+		case 'd':
+			if (clickedObj >= 0)
+				objs.at(clickedObj).rotate.data[0]++;
+			break;
+		case 's':
+			//rotatey--;
+			break;
+		case 'w':
+			//rotatey++;
+			break;
+		}
+	}*/
 	
 	glutPostRedisplay();
 }
@@ -207,6 +264,8 @@ void mouse(int button, int state, int x, int y) {
 					clickedObj = -1;
 					typingField = -1;
 				}
+
+				valueBox = "";
 			}
 			/* Se clicou diretamente fora */
 			else if (clickedObj >= 0 || typingField >= 0) {
@@ -251,9 +310,10 @@ void showObjects() {
 
 		poly += (*o).f.size();
 		glPushMatrix();
-
-			glRotatef((*o).rotate.data[0], 0, 1, 0);
-			//glRotatef((*o).rotate.data[0], 1, 0, 0);
+			
+			glScalef((*o).scale.data[0], (*o).scale.data[1], (*o).scale.data[2]);
+			glTranslatef((*o).translate.data[0], (*o).translate.data[1], (*o).translate.data[2]);
+			glRotatef((*o).rotate.data[0], (*o).rotate.data[1], (*o).rotate.data[2], (*o).rotate.data[3]);
 
 			glColor4f((*o).rgba.data[0], (*o).rgba.data[1], (*o).rgba.data[2], (*o).rgba.data[3]);
 			glBegin(GL_TRIANGLES);
@@ -411,7 +471,10 @@ void displayMenu() {
 					
 						glTranslated(60 - 12* (2-j) - 12 + 0.7, 168 - pos - 5 + 0.5, 0);
 						glScaled(0.035, 0.035, 0);
-						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+						if(clickedObj == i && typingField == j)
+							glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
+						else
+							glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
 
 					glPopMatrix();
 				}
@@ -432,7 +495,10 @@ void displayMenu() {
 
 					glTranslated(60 - 12 * (3-j) - 12 + 0.7, 161 - pos - 5 + 0.5, 0);
 					glScaled(0.035, 0.035, 0);
-					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+					if (clickedObj == i && typingField-3 == j)
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
+					else
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
 
 					glPopMatrix();
 				}
@@ -452,7 +518,11 @@ void displayMenu() {
 
 					glTranslated(60 - 12 * (2-j) - 12 + 0.7, 154 - pos - 5 + 0.5, 0);
 					glScaled(0.035, 0.035, 0);
-					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+
+					if (clickedObj == i && typingField-7 == j)
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
+					else
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
 
 					glPopMatrix();
 				}
@@ -472,7 +542,10 @@ void displayMenu() {
 
 					glTranslated(60 - 12 + 0.7, 147 - pos - 5 + 0.5, 0);
 					glScaled(0.035, 0.035, 0);
-					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+					if (clickedObj == i && typingField == 10)
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
+					else
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
 
 				glPopMatrix();
 				
