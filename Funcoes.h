@@ -2,13 +2,14 @@
 #define FUNCOES_H__
 #include <GL/freeglut.h>
 #include <vector>
+#include <cmath>
 #include "Objeto.h"
 
 /* TODO:
-*	Controle de Transparência;
-*	Controle de centro de câmera (em qual objeto ou na origem);
+*	Controle de Transparï¿½ncia;
+*	Controle de centro de cï¿½mera (em qual objeto ou na origem);
 *	Menu com Scrolling
-*	Alterar nome das variáveis
+*	Alterar nome das variï¿½veis
 */
 
 extern vector<Objeto> objs;
@@ -21,22 +22,24 @@ int poly = 0,
 /* Representa o scroll do menu */
 int menuPos = 0;
 
-/* Aspect Rato da tela e posição do observador */
+/* Aspect Rato da tela e posiï¿½ï¿½o do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
-GLdouble viewer[] = { 3.0, 3.0, 6.0 };
+GLdouble viewer[] = { 0.0, 0.0, 6.0 };
+GLdouble lookPoint[] = { 0.0, 0.0, 0.0 };
+GLdouble upVector[] = { 0.0, 1.0, 0.0 };
 
-/* String digitada na caixa de importação do objeto */
+/* String digitada na caixa de importaï¿½ï¿½o do objeto */
 string nameBox = "", valueBox = "";
 
-/* Identificadores para saber se o usuário está digitando						*/
+/* Identificadores para saber se o usuï¿½rio estï¿½ digitando						*/
 /* clickedObj = -1 representa a tela de menu inteira							*/
 /* clickedObj >= 0 representa um objeto de "objs"								*/
 /* typingField = -1 representa lugar nenhum										*/
-/* typingField = 0 representa a caixa de importação caso clickedObj = -1		*/
+/* typingField = 0 representa a caixa de importaï¿½ï¿½o caso clickedObj = -1		*/
 /* typingField = 0 e <= 10 representam caixas do objeto quanto clickedObj != -1 */
 short clickedObj = -1, typingField = -1;
 
-/* Função para carregar objeto */
+/* Funï¿½ï¿½o para carregar objeto */
 void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
 	int timeStart = glutGet(GLUT_ELAPSED_TIME);
@@ -138,6 +141,123 @@ void keyboard(unsigned char key, int x, int y) {
 			valueBox += key;
 
 	}
+	else {
+		GLdouble n[] = { 0.0, 0.0, 0.0 };
+		GLdouble u[] = { 0.0, 0.0, 0.0 };
+		GLdouble norm;
+		switch (key) {
+			case 'i':
+				menuPos--;
+				break;
+			case 'k':
+				menuPos++;
+				break;
+			case 'a':
+				//Calcula o produto vetorial para achar o vetor u perpendicular a n e v
+				n[0] = lookPoint[0]-viewer[0]; n[1] = lookPoint[1]-viewer[1]; n[2] = lookPoint[2]-viewer[2];
+
+				u[0] = (upVector[1]*n[2])-( n[1]*upVector[2]);
+				u[1] = -((upVector[0]*n[2])-( n[0]*upVector[2]));
+				u[2] = (upVector[0]*n[1])-( n[0]*upVector[1]);
+				//Calcula a norma de u e o torna unitÃ¡rio
+				norm = sqrt( pow(u[0], 2) + pow(u[1], 2) + pow(u[2], 2) );
+				u[0] = u[0]/norm;
+				u[1] = u[1]/norm;
+				u[2] = u[2]/norm;
+
+				viewer[0] = viewer[0] + (u[0] * 0.1);
+				viewer[1] = viewer[1] + (u[1] * 0.1);
+				viewer[2] = viewer[2] + (u[2] * 0.1);
+
+				lookPoint[0] = lookPoint[0] + (u[0] * 0.1);
+				lookPoint[1] = lookPoint[1] + (u[1] * 0.1);
+				lookPoint[2] = lookPoint[2] + (u[2] * 0.1);
+
+				gluLookAt(
+					viewer[0], viewer[1], viewer[2],
+					lookPoint[0], lookPoint[1], lookPoint[2],
+					upVector[0], upVector[1], upVector[2]
+				);
+				break;
+			case 'd':
+				//Calcula o produto vetorial para achar o vetor u perpendicular a n e v
+				n[0] = lookPoint[0]-viewer[0]; n[1] = lookPoint[1]-viewer[1]; n[2] = lookPoint[2]-viewer[2];
+
+				u[0] = (upVector[1]*n[2])-( n[1]*upVector[2]);
+				u[1] = -((upVector[0]*n[2])-( n[0]*upVector[2]));
+				u[2] = (upVector[0]*n[1])-( n[0]*upVector[1]);
+				//Calcula a norma de u e o torna unitÃ¡rio
+				norm = sqrt( pow(u[0], 2) + pow(u[1], 2) + pow(u[2], 2) );
+				u[0] = u[0]/norm;
+				u[1] = u[1]/norm;
+				u[2] = u[2]/norm;
+
+				viewer[0] = viewer[0] - (u[0] * 0.1);
+				viewer[1] = viewer[1] - (u[1] * 0.1);
+				viewer[2] = viewer[2] - (u[2] * 0.1);
+
+				lookPoint[0] = lookPoint[0] - (u[0] * 0.1);
+				lookPoint[1] = lookPoint[1] - (u[1] * 0.1);
+				lookPoint[2] = lookPoint[2] - (u[2] * 0.1);
+
+				gluLookAt(
+					viewer[0], viewer[1], viewer[2],
+					lookPoint[0], lookPoint[1], lookPoint[2],
+					upVector[0], upVector[1], upVector[2]
+				);
+				break;
+			case 's':
+				//Calcula o vetor n
+				n[0] = lookPoint[0]-viewer[0]; n[1] = lookPoint[1]-viewer[1]; n[2] = lookPoint[2]-viewer[2];
+
+				//Calcula a norma de n e o torna unitÃ¡rio
+				norm = sqrt( pow(n[0], 2) + pow(n[1], 2) + pow(n[2], 2) );
+				n[0] = abs(n[0]/norm);
+				n[1] = abs(n[1]/norm);
+				n[2] = abs(n[2]/norm);
+
+				viewer[0] = viewer[0] + (n[0] * 0.1);
+				viewer[1] = viewer[1] + (n[1] * 0.1);
+				viewer[2] = viewer[2] + (n[2] * 0.1);
+
+				lookPoint[0] = lookPoint[0] + (n[0] * 0.1);
+				lookPoint[1] = lookPoint[1] + (n[1] * 0.1);
+				lookPoint[2] = lookPoint[2] + (n[2] * 0.1);
+
+				gluLookAt(
+					viewer[0], viewer[1], viewer[2],
+					lookPoint[0], lookPoint[1], lookPoint[2],
+					upVector[0], upVector[1], upVector[2]
+				);
+
+				break;
+			case 'w':
+				//Calcula o vetor n
+				n[0] = lookPoint[0]-viewer[0]; n[1] = lookPoint[1]-viewer[1]; n[2] = lookPoint[2]-viewer[2];
+
+				//Calcula a norma de n e o torna unitÃ¡rio
+				norm = sqrt( pow(n[0], 2) + pow(n[1], 2) + pow(n[2], 2) );
+				n[0] = abs(n[0]/norm);
+				n[1] = abs(n[1]/norm);
+				n[2] = abs(n[2]/norm);
+
+				viewer[0] = viewer[0] - (n[0] * 0.1);
+				viewer[1] = viewer[1] - (n[1] * 0.1);
+				viewer[2] = viewer[2] - (n[2] * 0.1);
+
+				lookPoint[0] = lookPoint[0] - (n[0] * 0.1);
+				lookPoint[1] = lookPoint[1] - (n[1] * 0.1);
+				lookPoint[2] = lookPoint[2] - (n[2] * 0.1);
+
+				gluLookAt(
+					viewer[0], viewer[1], viewer[2],
+					lookPoint[0], lookPoint[1], lookPoint[2],
+					upVector[0], upVector[1], upVector[2]
+				);
+
+				break;
+		}
+	}
 	/*else {
 		switch (key) {
 		case 'i':
@@ -180,11 +300,11 @@ void mouse(int button, int state, int x, int y) {
 			xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
 			yf = (200) * (__HEIGHT - y) / __HEIGHT;
 
-			/* Descobre qual caixa o usuário clicou */
+			/* Descobre qual caixa o usuï¿½rio clicou */
 			/*cout << yf << " ";
 			cout << ((yf - 140 + menuPos) / -40)+0.875 << endl;*/
 
-			/* Checa se ele está clicando na caixa de importação */
+			/* Checa se ele estï¿½ clicando na caixa de importaï¿½ï¿½o */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
 				clickedObj = -1;
 				typingField = 0;
@@ -198,9 +318,9 @@ void mouse(int button, int state, int x, int y) {
 					clickedObj = trunc(aux);
 				
 
-					/* Está na 'caixa' em x que envolve todas as caixas menores de rotação, translação, etc... */
+					/* Estï¿½ na 'caixa' em x que envolve todas as caixas menores de rotaï¿½ï¿½o, translaï¿½ï¿½o, etc... */
 					
-					/* Checa em qual coluna está (da esquerda para a direita) e dentro checa em qual linha */
+					/* Checa em qual coluna estï¿½ (da esquerda para a direita) e dentro checa em qual linha */
 					if (xf >= 12 && xf <= 22) {
 
 						if (yf >= 161 - (clickedObj * 40 + 5) && yf <= 161 - (clickedObj * 40)) {
@@ -318,7 +438,7 @@ void showObjects() {
 			glColor4f((*o).rgba.data[0], (*o).rgba.data[1], (*o).rgba.data[2], (*o).rgba.data[3]);
 			glBegin(GL_TRIANGLES);
 			for (int i = 0; i < (*o).f.size(); i++) {
-				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço */
+				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaï¿½o */
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
@@ -351,7 +471,7 @@ void resetView() {
 
 }
 
-/* Define os modos de projeção e modelview a serem seguidos na parte da tela referente a exibição dos objetos */
+/* Define os modos de projeï¿½ï¿½o e modelview a serem seguidos na parte da tela referente a exibiï¿½ï¿½o dos objetos */
 void objectsProjection() {
 	//Prepara tela do desenho
 	glMatrixMode(GL_PROJECTION);
@@ -364,26 +484,26 @@ void objectsProjection() {
 
 	gluLookAt(
 		viewer[0], viewer[1], viewer[2],
-		0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0
+		lookPoint[0], lookPoint[1], lookPoint[2],
+		upVector[0], upVector[1], upVector[2]
 	);
 }
 
-/* Define os modos de projeção e modelview a serem seguidos na parte da tela referente a exibição do menu */
+/* Define os modos de projeï¿½ï¿½o e modelview a serem seguidos na parte da tela referente a exibiï¿½ï¿½o do menu */
 void menuProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	glOrtho(0, 200 * aspectRatio / 4, 0, 200, -2, 2);
 
-	/* Temos uma viewport de tamanho 1/4 da tela que vai da posição x = 3/4 (do tamanho total) até o final*/
+	/* Temos uma viewport de tamanho 1/4 da tela que vai da posiï¿½ï¿½o x = 3/4 (do tamanho total) atï¿½ o final*/
 	glViewport(__WIDTH - __WIDTH / 4, 0, __WIDTH / 4, __HEIGHT);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
-/* Chama o necessário para mostrar os objetos */
+/* Chama o necessï¿½rio para mostrar os objetos */
 void displayObjects() {
 
 	objectsProjection();
@@ -391,7 +511,7 @@ void displayObjects() {
 	showObjects();
 }
 
-/* Função feita para desenhar algo do tipo: "Label: *" onde * são n caixas*/
+/* Funï¿½ï¿½o feita para desenhar algo do tipo: "Label: *" onde * sï¿½o n caixas*/
 void drawBoxAndLabel(double startX, double endX, double startY, double endY, string label, int quantity) {
 	glPushMatrix();
 
@@ -406,20 +526,20 @@ void drawBoxAndLabel(double startX, double endX, double startY, double endY, str
 	}
 }
 
-/* Chama o necessário para construir o menu*/
+/* Chama o necessï¿½rio para construir o menu*/
 void displayMenu() {
 	
-	/* Desativado teste pra checar o que está na frente */
+	/* Desativado teste pra checar o que estï¿½ na frente */
 	glDisable(GL_DEPTH_TEST);
 	
-	/* Fazemos a projeção do menu */
+	/* Fazemos a projeï¿½ï¿½o do menu */
 	menuProjection();
 
 	/* Desenhamos o background */
 	glColor4f(0.88, 0.88, 0.88, 0.60);
 	glRectd(0.0, 0.0, 200 * aspectRatio / 4, 200.0);
 
-	/* Damos um push na matrix para não precisarmos redefinir o lookAt novamente para posição original */
+	/* Damos um push na matrix para nï¿½o precisarmos redefinir o lookAt novamente para posiï¿½ï¿½o original */
 	
 	glPushMatrix();
 
@@ -456,7 +576,7 @@ void displayMenu() {
 
 				glPopMatrix();
 
-				/* Desenha as caixas relacionadas com translação e seu label */
+				/* Desenha as caixas relacionadas com translaï¿½ï¿½o e seu label */
 
 				drawBoxAndLabel(23.0f / 3, 60, 168 - (pos + 5), 168 - pos, "T: ", 3);
 				
@@ -481,7 +601,7 @@ void displayMenu() {
 
 				glColor4d(0,0,0, 1);
 
-				/* Desenha as caixas relacionadas com rotação e seu label */
+				/* Desenha as caixas relacionadas com rotaï¿½ï¿½o e seu label */
 
 				drawBoxAndLabel(23.0f / 3, 60, 161 - (pos + 5), 161 - pos, "R: ", 4);
 
@@ -596,7 +716,7 @@ void displayMenu() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-/* Chama as funções necessárias para apagar a tela e desenhar os objetos e o menu. Além disso é a controladora do swapBuffer */
+/* Chama as funï¿½ï¿½es necessï¿½rias para apagar a tela e desenhar os objetos e o menu. Alï¿½m disso ï¿½ a controladora do swapBuffer */
 void display() {
 	resetView();
 	displayObjects();
@@ -605,7 +725,7 @@ void display() {
 	glutSwapBuffers();
 }
 
-/* Sempre mantêm a tela com um aspect definido para não distorcer o desenho */
+/* Sempre mantï¿½m a tela com um aspect definido para nï¿½o distorcer o desenho */
 void reshape(int w, int h){
 	if (h == 0)
 		h = 1;
