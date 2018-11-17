@@ -47,22 +47,22 @@ vector<string> split(string a, string b) {
 template<class T>
 class Duo {
 	friend ostream & operator << (ostream &, const Duo<T>& t) {
-		cout << "(" << t.primeiro << ", " << t.segundo << ")";
+		cout << "(" << t.data[0] << ", " << t.data[1] << ")";
 		return cout;
 	}
 public:
-	T primeiro;
-	T segundo;
+	T data[2];
 	
-	Duo(){}
+	Duo(){
+
+	}
 	Duo(T p, T s) {
-		primeiro = p;
-		segundo = s;
+		altera(p,s);
 	}
 
 	void altera(T p, T s) {
-		primeiro = p;
-		segundo = s;
+		data[0] = p;
+		data[1] = s;
 	}
 
 };
@@ -72,26 +72,25 @@ public:
 template<class T>
 class Trio {
 	friend ostream & operator << (ostream &cout, const Trio<T>& t) {
-		cout << "(" << t.primeiro << ", " << t.segundo << ", " << t.terceiro << ") ";
+		cout << "(" << t.data[0] << ", " << t.data[1] << ", " << t.data[2] << ") ";
 		return cout;
 	}
 public:
-	T primeiro;
-	T segundo;
-	T terceiro;
+	T data[3];
 
-	Trio() {}
+	Trio() {
+
+	}
 	Trio(T p, T s, T t) {
-		primeiro = p;
-		segundo = s;
-		terceiro = t;
+		altera(p, s, t);
 	}
 
 	void altera(T p, T s, T t) {
-		primeiro = p;
-		segundo = s;
-		terceiro = t;
+		data[0] = p;
+		data[1] = s;
+		data[2] = t;
 	}
+
 };
 
 /* Classe para variáveis quadruplas */
@@ -99,29 +98,26 @@ public:
 template<class T>
 class Quad {
 	friend ostream & operator << (ostream &cout, const Quad<T>& t) {
-		cout << "(" << t.primeiro << ", " << t.segundo << ", " << t.terceiro << ", " << t.quarto << ") ";
+		cout << "(" << t.data[0] << ", " << t.data[1] << ", " << t.data[2] << ", " << t.data[3] << ") ";
 		return cout;
 	}
 public:
-	T primeiro;
-	T segundo;
-	T terceiro;
-	T quarto;
+	T data[4];
 
-	Quad() {}
+	Quad() {
+
+	}
 	Quad(T p, T s, T t, T q) {
-		primeiro = p;
-		segundo = s;
-		terceiro = t;
-		quarto = q;
+		altera(p, s, t, q);
 	}
 
 	void altera(T p, T s, T t, T q) {
-		primeiro = p;
-		segundo = s;
-		terceiro = t;
-		quarto = q;
+		data[0] = p;
+		data[1] = s;
+		data[2] = t;
+		data[3] = q;
 	}
+
 };
 
 
@@ -142,7 +138,7 @@ public:
 	vector<Trio<double>> v;
 	vector<Trio<double>> vn;
 	vector<Duo<double>> vt;
-	vector<Trio<Duo<double>>> f;
+	vector<Trio<Trio<double>>> f;
 	
 	Objeto() {
 		/* Nao faz nada */
@@ -178,7 +174,7 @@ public:
 	void initialize(string fileName) {
 		eraseData();
 		name = fileName;
-		read(fileName);
+		read2(fileName);
 	}
 
 	/* Preenche o objeto e adiciona cor */
@@ -186,9 +182,9 @@ public:
 
 		eraseData();
 		name = fileName;
-		read(fileName);
+		read2(fileName);
 
-		this->rgba.altera(rgba.primeiro, rgba.segundo, rgba.terceiro, rgba.quarto);
+		this->rgba.altera(rgba.data[0], rgba.data[1], rgba.data[2], rgba.data[3]);
 	}
 
 	/* Lê do arquivo o objeto */
@@ -201,9 +197,9 @@ public:
 
 		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
 
-		Trio<double> Taux;
-		Duo<double> Daux;
-		Trio<Duo<double>> TDaux;
+		Trio<double> Taux(0,0,0);
+		Duo<double> Daux(0,0);
+		Trio<Trio<double>> TDaux(Trio<double>(0,0,0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
 
 		file.open(fileName.c_str(), fstream::in | fstream::binary);
 
@@ -226,45 +222,122 @@ public:
 			}
 			else if (line == "v") {
 				getline(file, line, ' ');
-				istringstream(line) >> Taux.primeiro;
+				istringstream(line) >> Taux.data[0];
 				getline(file, line, ' ');
-				istringstream(line) >> Taux.segundo;
+				istringstream(line) >> Taux.data[1];
 				getline(file, line);
-				istringstream(line) >> Taux.terceiro;
+				istringstream(line) >> Taux.data[2];
 				v.push_back(Taux);
 			}
 			else if (line == "vn") {
 				getline(file, line, ' ');
-				istringstream(line) >> Taux.primeiro;
+				istringstream(line) >> Taux.data[0];
 				getline(file, line, ' ');
-				istringstream(line) >> Taux.segundo;
+				istringstream(line) >> Taux.data[1];
 				getline(file, line);
-				istringstream(line) >> Taux.terceiro;
+				istringstream(line) >> Taux.data[2];
 				vn.push_back(Taux);
 			}
 			else if (line == "vt") {
 				getline(file, line, ' ');
-				istringstream(line) >> Daux.primeiro;
+				istringstream(line) >> Daux.data[0];
 				getline(file, line);
-				istringstream(line) >> Daux.segundo;
+				istringstream(line) >> Daux.data[1];
 				vt.push_back(Daux);
 			}
 			else if (line == "f") {
 				getline(file, line, '/');
-				istringstream(line) >> TDaux.primeiro.primeiro;
+				istringstream(line) >> TDaux.data[0].data[0];
 				getline(file, line, ' ');
-				istringstream(line) >> TDaux.primeiro.segundo;
+				istringstream(line) >> TDaux.data[0].data[1];
 
 				getline(file, line, '/');
-				istringstream(line) >> TDaux.segundo.primeiro;
+				istringstream(line) >> TDaux.data[1].data[0];
 				getline(file, line, ' ');
-				istringstream(line) >> TDaux.segundo.segundo;
+				istringstream(line) >> TDaux.data[1].data[1];
 
 				getline(file, line, '/');
-				istringstream(line) >> TDaux.terceiro.primeiro;
+				istringstream(line) >> TDaux.data[2].data[0];
 				getline(file, line);
-				istringstream(line) >> TDaux.terceiro.segundo;
+				istringstream(line) >> TDaux.data[2].data[1];
 
+				f.push_back(TDaux);
+			}
+			else
+				getline(file, line);
+		}
+		file.close();
+	}
+
+	void read2(string fileName) {
+
+		/* Variáveis para auxilio do preenchimento */
+		fstream file;
+		string line;
+		vector<string> aux;
+
+		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
+
+		Trio<double> Taux(0, 0, 0);
+		Duo<double> Daux(0, 0);
+		Trio<Trio<double>> TDaux(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
+
+		file.open(fileName.c_str(), fstream::in | fstream::binary);
+
+		/* Checa se o arquivo existe de fato */
+		if (!file.good())
+			throw 1;
+
+		while (file >> line) {
+			if (line == "usemtl" || line == "mtllib") {
+				getline(file, line);
+				mtl = split(line, "()").at(0);
+			}
+
+			else if (line == "s") {
+				getline(file, line);
+				if (line == "0" || line == "off")
+					s = false;
+				else
+					s = true;
+			}
+			else if (line == "v") {
+				for (int i = 0; i < 3; i++) {
+					file >> line;
+					istringstream(line) >> Taux.data[i];
+				}
+				v.push_back(Taux);
+			}
+			else if (line == "vn") {
+				for (int i = 0; i < 3; i++) {
+					file >> line;
+					istringstream(line) >> Taux.data[i];
+				}
+				vn.push_back(Taux);
+			}
+			else if (line == "vt") {
+				for (int i = 0; i < 2; i++) {
+					file >> line;
+					istringstream(line) >> Daux.data[i];
+				}
+				vt.push_back(Daux);
+			}
+			else if (line == "f") {
+				getline(file, line, '/');
+				istringstream(line) >> TDaux.data[0].data[0];
+				getline(file, line, ' ');
+				istringstream(line) >> TDaux.data[0].data[1];
+
+				getline(file, line, '/');
+				istringstream(line) >> TDaux.data[1].data[0];
+				getline(file, line, ' ');
+				istringstream(line) >> TDaux.data[1].data[1];
+
+				getline(file, line, '/');
+				istringstream(line) >> TDaux.data[2].data[0];
+				getline(file, line);
+				istringstream(line) >> TDaux.data[2].data[1];
+				
 				f.push_back(TDaux);
 			}
 			else

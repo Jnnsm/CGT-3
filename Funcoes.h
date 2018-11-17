@@ -91,11 +91,11 @@ void keyboard(unsigned char key, int x, int y) {
 				break;
 			case 'a':
 				if(clickedObj >= 0)
-					objs.at(clickedObj).rotate.primeiro--;
+					objs.at(clickedObj).rotate.data[0]--;
 				break;
 			case 'd':
 				if (clickedObj >= 0)
-					objs.at(clickedObj).rotate.primeiro++;
+					objs.at(clickedObj).rotate.data[0]++;
 				break;
 			case 's':
 				//rotatey--;
@@ -252,29 +252,29 @@ void showObjects() {
 		poly += (*o).f.size();
 		glPushMatrix();
 
-			glRotatef((*o).rotate.primeiro, 0, 1, 0);
-			//glRotatef((*o).rotate.primeiro, 1, 0, 0);
+			glRotatef((*o).rotate.data[0], 0, 1, 0);
+			//glRotatef((*o).rotate.data[0], 1, 0, 0);
 
-			glColor4f((*o).rgba.primeiro, (*o).rgba.segundo, (*o).rgba.terceiro, (*o).rgba.quarto);
+			glColor4f((*o).rgba.data[0], (*o).rgba.data[1], (*o).rgba.data[2], (*o).rgba.data[3]);
 			glBegin(GL_TRIANGLES);
 			for (int i = 0; i < (*o).f.size(); i++) {
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espaço */
 				glVertex3f(
-					(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).primeiro,
-					(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).segundo,
-					(*o).v.at((*o).f.at(i).primeiro.primeiro - 1).terceiro
+					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
+					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
+					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[2]
 				);
 
 				glVertex3f(
-					(*o).v.at((*o).f.at(i).segundo.primeiro - 1).primeiro,
-					(*o).v.at((*o).f.at(i).segundo.primeiro - 1).segundo,
-					(*o).v.at((*o).f.at(i).segundo.primeiro - 1).terceiro
+					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[0],
+					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[1],
+					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[2]
 				);
 
 				glVertex3f(
-					(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).primeiro,
-					(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).segundo,
-					(*o).v.at((*o).f.at(i).terceiro.primeiro - 1).terceiro
+					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[0],
+					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[1],
+					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[2]
 				);
 			}
 			glEnd();
@@ -379,9 +379,9 @@ void displayMenu() {
 				/* Desenha caixa de fundo com a cor do objeto */
 				
 				if(clickedObj != i)
-					glColor4f(objs.at(i).rgba.primeiro, objs.at(i).rgba.segundo, objs.at(i).rgba.terceiro, 0.4);
+					glColor4f(objs.at(i).rgba.data[0], objs.at(i).rgba.data[1], objs.at(i).rgba.data[2], 0.4);
 				else {
-					glColor4f(objs.at(i).rgba.primeiro, objs.at(i).rgba.segundo, objs.at(i).rgba.terceiro, 1);
+					glColor4f(objs.at(i).rgba.data[0], objs.at(i).rgba.data[1], objs.at(i).rgba.data[2], 1);
 				}
 				glRectd(20.0f / 3, 180 - pos - 40, 60, 180 - (pos + 5));
 
@@ -399,17 +399,84 @@ void displayMenu() {
 				/* Desenha as caixas relacionadas com translação e seu label */
 
 				drawBoxAndLabel(23.0f / 3, 60, 168 - (pos + 5), 168 - pos, "T: ", 3);
+				
+				/* Escreve o valor nas caixas */
+				stringstream ss;
+
+				glColor4d(1, 1, 1, 1);
+				for (int j = 0; j < 3; j++) {
+					ss.str("");
+					ss << objs.at(i).translate.data[j];
+					glPushMatrix();
+					
+						glTranslated(60 - 12* (2-j) - 12 + 0.7, 168 - pos - 5 + 0.5, 0);
+						glScaled(0.035, 0.035, 0);
+						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+
+					glPopMatrix();
+				}
+
+				glColor4d(0,0,0, 1);
 
 				/* Desenha as caixas relacionadas com rotação e seu label */
 
 				drawBoxAndLabel(23.0f / 3, 60, 161 - (pos + 5), 161 - pos, "R: ", 4);
 
+				/* Escreve o valor nas caixas */
+
+				glColor4d(1, 1, 1, 1);
+				for (int j = 0; j < 4; j++) {
+					ss.str("");
+					ss << objs.at(i).rotate.data[j];
+					glPushMatrix();
+
+					glTranslated(60 - 12 * (3-j) - 12 + 0.7, 161 - pos - 5 + 0.5, 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+
+					glPopMatrix();
+				}
+
+				glColor4d(0, 0, 0, 1);
+
 				/* Desenha as caixas relacionadas com escala e seu label */
 				drawBoxAndLabel(23.0f / 3, 60, 154 - (pos + 5), 154 - pos, "E: ", 3);
+
+				/* Escreve o valor nas caixas */
+
+				glColor4d(1, 1, 1, 1);
+				for (int j = 0; j < 3; j++) {
+					ss.str("");
+					ss << objs.at(i).scale.data[j];
+					glPushMatrix();
+
+					glTranslated(60 - 12 * (2-j) - 12 + 0.7, 154 - pos - 5 + 0.5, 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+
+					glPopMatrix();
+				}
+
+				glColor4d(0, 0, 0, 1);
 
 				/* Desenha as caixas relacionadas com transparencia e seu label */
 
 				drawBoxAndLabel(23.0f / 3, 60, 147 - (pos + 5), 147 - pos, "Alpha: ", 1);
+
+				/* Escreve o valor nas caixas */
+
+				glColor4d(1, 1, 1, 1);
+				ss.str("");
+				ss << objs.at(i).rgba.data[3];
+				glPushMatrix();
+
+					glTranslated(60 - 12 + 0.7, 147 - pos - 5 + 0.5, 0);
+					glScaled(0.035, 0.035, 0);
+					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)ss.str().c_str());
+
+				glPopMatrix();
+				
+				glColor4d(0, 0, 0, 1);
 			}
 		}
 
