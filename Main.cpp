@@ -13,8 +13,8 @@ double __WIDTH = 800, __HEIGHT = 600;
 int main(int argc, char **argv) {
 	srand(time(NULL));
 
-	Quad<double> cor(0,0,1,1);
-	createObj("Teapot.obj", cor );
+	/*Quad<double> cor(0,0,1,1);
+	createObj("Teapot.obj", cor );*/
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);

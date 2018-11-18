@@ -5,13 +5,6 @@
 #include <cmath>
 #include "Objeto.h"
 
-/* TODO:
-*	Controle de Transpar�ncia;
-*	Controle de centro de c�mera (em qual objeto ou na origem);
-*	Menu com Scrolling
-*	Alterar nome das vari�veis
-*/
-
 extern vector<Objeto> objs;
 extern double __WIDTH, __HEIGHT;
 
@@ -45,7 +38,6 @@ short clickedObj = -1, typingField = -1;
 /* Fun��o para carregar objeto */
 void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
-	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 	try {
 		dr.initialize(fileName, color);
 		objs.push_back(dr);
@@ -53,7 +45,6 @@ void createObj(string fileName, Quad<double> color) {
 	catch (int e) {
 		cerr << "File does not exist" << endl;
 	}
-	cout << glutGet(GLUT_ELAPSED_TIME) - timeStart << endl;
 }
 
 #endif
@@ -63,7 +54,6 @@ void createObj(string fileName, Quad<double> color) {
 /* w - a - s - d = comandos que movem os objetos */
 
 void keyboard(unsigned char key, int x, int y) {
-	cout << clickedObj << " " << typingField << endl;
 	/* Quer digitar o nome de um novo objeto */
 	if (clickedObj == -1 && typingField == 0) {
 		/* Apertou enter para inserir o objeto */
@@ -137,7 +127,7 @@ void keyboard(unsigned char key, int x, int y) {
 		}
 		/* Apertou backspace */
 		else if (key == 8) {
-			if (nameBox.size() > 0)
+			if (valueBox.size() > 0)
 				valueBox.pop_back();
 		}
 		else
@@ -267,31 +257,6 @@ void keyboard(unsigned char key, int x, int y) {
 				break;
 		}
 	}
-	/*else {
-		switch (key) {
-		case 'i':
-			menuPos--;
-			break;
-		case 'k':
-			menuPos++;
-			break;
-		case 'a':
-			if(clickedObj >= 0)
-				objs.at(clickedObj).rotate.data[0]--;
-			break;
-		case 'd':
-			if (clickedObj >= 0)
-				objs.at(clickedObj).rotate.data[0]++;
-			break;
-		case 's':
-			//rotatey--;
-			break;
-		case 'w':
-			//rotatey++;
-			break;
-		}
-	}*/
-	
 	glutPostRedisplay();
 }
 
@@ -309,11 +274,7 @@ void mouse(int button, int state, int x, int y) {
 			xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
 			yf = (200) * (__HEIGHT - y) / __HEIGHT;
 
-			/* Descobre qual caixa o usu�rio clicou */
-			/*cout << yf << " ";
-			cout << ((yf - 140 + menuPos) / -40)+0.875 << endl;*/
-
-			/* Checa se ele est� clicando na caixa de importa��o */
+			/* Checa se ele esta clicando na caixa de importacao */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
 				clickedObj = -1;
 				typingField = 0;
@@ -435,7 +396,6 @@ void showObjects() {
 	poly = 0;
 	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++){
-
 
 		poly += (*o).f.size();
 		glPushMatrix();
@@ -564,7 +524,7 @@ void displayMenu() {
 			pos = i * 40;
 
 			/* Desenha apenas se ele estiver a baixo da barra que importa objetos */
-			if (180 - pos - 40 - menuPos <= 180) {
+			if (180 - pos - 5 - menuPos <= 180) {
 				/* Desenha caixa de fundo com a cor do objeto */
 				
 				if(clickedObj != i)
