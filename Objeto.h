@@ -130,6 +130,7 @@ public:
 	Trio<double> translate;
 	Quad<double> rotate;
 	Trio<double> scale;
+	bool visible;
 
 	/* Variáveis relacionadas com o arquivo */
 	string name;
@@ -153,6 +154,7 @@ public:
 	/* Limpa o objeto */
 	void eraseData() {
 
+		visible = true;
 		translate.altera(0, 0, 0);
 		rotate.altera(0, 0, 0, 0);
 		scale.altera(1, 1, 1);
@@ -174,7 +176,7 @@ public:
 	void initialize(string fileName) {
 		eraseData();
 		name = fileName;
-		read2(fileName);
+		read(fileName);
 	}
 
 	/* Preenche o objeto e adiciona cor */
@@ -182,94 +184,12 @@ public:
 
 		eraseData();
 		name = fileName;
-		read2(fileName);
+		read(fileName);
 
 		this->rgba.altera(rgba.data[0], rgba.data[1], rgba.data[2], rgba.data[3]);
 	}
 
-	/* Lê do arquivo o objeto */
 	void read(string fileName) {
-
-		/* Variáveis para auxilio do preenchimento */
-		fstream file;
-		string line;
-		vector<string> aux;
-
-		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
-
-		Trio<double> Taux(0,0,0);
-		Duo<double> Daux(0,0);
-		Trio<Trio<double>> TDaux(Trio<double>(0,0,0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
-
-		file.open(fileName.c_str(), fstream::in | fstream::binary);
-
-		/* Checa se o arquivo existe de fato */
-		if (!file.good())
-			throw 1;
-		
-		while (getline(file, line, ' ')) {
-			if (line == "usemtl" || line == "mtllib") {
-				getline(file, line);
-				mtl = split(line, "()").at(0);
-			}
-
-			else if (line == "s") {
-				getline(file, line);
-				if (line == "0" || line == "off")
-					s = false;
-				else
-					s = true;
-			}
-			else if (line == "v") {
-				getline(file, line, ' ');
-				istringstream(line) >> Taux.data[0];
-				getline(file, line, ' ');
-				istringstream(line) >> Taux.data[1];
-				getline(file, line);
-				istringstream(line) >> Taux.data[2];
-				v.push_back(Taux);
-			}
-			else if (line == "vn") {
-				getline(file, line, ' ');
-				istringstream(line) >> Taux.data[0];
-				getline(file, line, ' ');
-				istringstream(line) >> Taux.data[1];
-				getline(file, line);
-				istringstream(line) >> Taux.data[2];
-				vn.push_back(Taux);
-			}
-			else if (line == "vt") {
-				getline(file, line, ' ');
-				istringstream(line) >> Daux.data[0];
-				getline(file, line);
-				istringstream(line) >> Daux.data[1];
-				vt.push_back(Daux);
-			}
-			else if (line == "f") {
-				getline(file, line, '/');
-				istringstream(line) >> TDaux.data[0].data[0];
-				getline(file, line, ' ');
-				istringstream(line) >> TDaux.data[0].data[1];
-
-				getline(file, line, '/');
-				istringstream(line) >> TDaux.data[1].data[0];
-				getline(file, line, ' ');
-				istringstream(line) >> TDaux.data[1].data[1];
-
-				getline(file, line, '/');
-				istringstream(line) >> TDaux.data[2].data[0];
-				getline(file, line);
-				istringstream(line) >> TDaux.data[2].data[1];
-
-				f.push_back(TDaux);
-			}
-			else
-				getline(file, line);
-		}
-		file.close();
-	}
-
-	void read2(string fileName) {
 
 		/* Variáveis para auxilio do preenchimento */
 		fstream file;

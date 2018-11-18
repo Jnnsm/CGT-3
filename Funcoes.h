@@ -10,7 +10,11 @@ extern double __WIDTH, __HEIGHT;
 
 /* Armazenam respectivamente a quantidade de poligonos na tela e o tempo para desenha-los */
 int poly = 0,
-	deltaTime = 0;
+	deltaTime = 0,
+	frameCounter = 0,
+	averageTime = 0;
+
+double timeCounter = 0;
 
 /* Representa o scroll do menu */
 int menuPos = 0;
@@ -287,11 +291,15 @@ void mouse(int button, int state, int x, int y) {
 				if (trunc(aux) == trunc(aux + 0.125) && aux < objs.size()) {
 					clickedObj = trunc(aux);
 				
+					/* Caso a visibilidade do objeto seja alterada */
+					if (xf>= 53 && xf <= 58 && yf >= 175 - clickedObj*40 - 6 - menuPos && yf <= 175 - clickedObj * 40 - 1 - menuPos) {
+						objs.at(clickedObj).visible = !objs.at(clickedObj).visible;
+					}
 
-					/* Est� na 'caixa' em x que envolve todas as caixas menores de rota��o, transla��o, etc... */
+					/* Esta na 'caixa' em x que envolve todas as caixas menores de rotacao, translacao, etc... */
 					
-					/* Checa em qual coluna est� (da esquerda para a direita) e dentro checa em qual linha */
-					if (xf >= 12 && xf <= 22) {
+					/* Checa em qual coluna esta (da esquerda para a direita) e dentro checa em qual linha */
+					else if (xf >= 12 && xf <= 22) {
 
 						if (yf >= 161 - (clickedObj * 40 + 5) && yf <= 161 - (clickedObj * 40)) {
 							typingField = 3;
@@ -366,7 +374,7 @@ void mouse(int button, int state, int x, int y) {
 	}
 	/* Trata a parte dos objetos da tela */
 	else {
-
+		
 	}
 }
 
@@ -394,12 +402,11 @@ void showBaseScreen() {
 /* Desenha cada objeto na tela */
 void showObjects() {
 	poly = 0;
-	int timeStart = glutGet(GLUT_ELAPSED_TIME);
-	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++){
+	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++) {
+		if ((*o).visible) {
+			poly += (*o).f.size();
+			glPushMatrix();
 
-		poly += (*o).f.size();
-		glPushMatrix();
-			
 			glScalef((*o).scale.data[0], (*o).scale.data[1], (*o).scale.data[2]);
 			glTranslatef((*o).translate.data[0], (*o).translate.data[1], (*o).translate.data[2]);
 			glRotatef((*o).rotate.data[0], (*o).rotate.data[1], (*o).rotate.data[2], (*o).rotate.data[3]);
@@ -428,9 +435,9 @@ void showObjects() {
 			}
 			glEnd();
 
-		glPopMatrix();
+			glPopMatrix();
+		}
 	}
-	deltaTime = glutGet(GLUT_ELAPSED_TIME) - timeStart;
 }
 
 /* Limpa a tela */
@@ -482,6 +489,7 @@ void displayObjects() {
 
 /* Fun��o feita para desenhar algo do tipo: "Label: *" onde * s�o n caixas*/
 void drawBoxAndLabel(double startX, double endX, double startY, double endY, string label, int quantity) {
+	glColor4f(0, 0, 0, 1);
 	glPushMatrix();
 
 		glTranslated(startX, startY, 0);
@@ -545,7 +553,15 @@ void displayMenu() {
 
 				glPopMatrix();
 
-				/* Desenha as caixas relacionadas com transla��o e seu label */
+				/* Desenha a caixa que informa se o objeto está visível */
+				if (objs.at(i).visible)
+					glColor3f(1, 0, 0);
+				else {
+					glColor3f(1, 1, 1);
+				}
+				glRectd(53, 175 - pos - 6, 58, 175 - pos - 1);
+
+				/* Desenha as caixas relacionadas com translacaoo e seu label */
 
 				drawBoxAndLabel(23.0f / 3, 60, 168 - (pos + 5), 168 - pos, "T: ", 3);
 				
@@ -670,7 +686,7 @@ void displayMenu() {
 		glScaled(0.035, 0.035, 0);
 
 		stringstream ss;
-		ss << deltaTime;
+		ss << averageTime;
 		string time = ss.str() + " ms ";
 	
 		ss.str("");
@@ -687,9 +703,24 @@ void displayMenu() {
 
 /* Chama as fun��es necess�rias para apagar a tela e desenhar os objetos e o menu. Al�m disso � a controladora do swapBuffer */
 void display() {
+
+	if (timeCounter == 0) {
+		timeCounter = glutGet(GLUT_ELAPSED_TIME)/1000;
+	}
+	if ( glutGet(GLUT_ELAPSED_TIME)/1000 - timeCounter >= 1) {
+		averageTime = deltaTime / frameCounter;
+		deltaTime = frameCounter = 0;
+		timeCounter = glutGet(GLUT_ELAPSED_TIME)/1000;
+	}
+
+	int timeStart = glutGet(GLUT_ELAPSED_TIME);
+
 	resetView();
 	displayObjects();
 	displayMenu();
+
+	deltaTime += glutGet(GLUT_ELAPSED_TIME) - timeStart;
+	frameCounter++;
 
 	glutSwapBuffers();
 }
