@@ -19,6 +19,7 @@ double timeCounter = 0;
 /* Representa o scroll do menu */
 int menuPos = 0;
 
+
 /* Aspect Rato da tela e posi��o do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
 GLdouble viewer[] = { 3.0, 3.0, 6.0 };
@@ -27,6 +28,11 @@ GLdouble upVector[] = { 0.0, 1.0, 0.0 };
 
 /* Modo de exibição do objeto */
 GLint viewMode = GL_TRIANGLES;
+
+/* Movimentação do olho do observador */
+bool dragX = false, dragY = false;
+double posX, posY, posfX, posfY;
+double rotateX = 0, rotateY = 0;
 
 /* String digitada na caixa de importa��o do objeto */
 string nameBox = "", valueBox = "";
@@ -142,7 +148,15 @@ void keyboard(unsigned char key, int x, int y) {
 		GLdouble n[] = { 0.0, 0.0, 0.0 };
 		GLdouble u[] = { 0.0, 0.0, 0.0 };
 		GLdouble norm;
-		switch (key) {
+		switch (key) { 
+			case 'x':
+				posX = 0;
+				dragX = !dragX;
+				break;
+			case 'y':
+				posY = 0;
+				dragY = !dragY;
+				break;
 			case 'v': 
 				if(viewMode == GL_TRIANGLES)
 					viewMode = GL_LINES;
@@ -264,8 +278,59 @@ void keyboard(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
+void passiveMouse(int x, int y) {
+	double xf, yf;
+	xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
+	yf = (200) * (__HEIGHT - y) / __HEIGHT;
+	if (dragX) {
+		if (xf >= posX) {
+			if (xf >= posfX) {
+				rotateY += ((xf - posX) / 100);
+			}
+			else {
+				rotateY -= ((xf - posX) / 100);
+			}
+		}
+		else {
+			if (xf >= posfX) {
+				rotateY -= ((xf - posX) / 100);
+			}
+			else {
+				rotateY += ((xf - posX) / 100);
+			}
+		}
+	}
+	if (dragY) {
+
+		if (yf >= posY) {
+			if (yf >= posfY) {
+				rotateX += ((yf - posY) / 100);
+			}
+			else {
+				rotateX -= ((yf - posY) / 100);
+			}
+		}
+		else {
+			if (yf >= posfY) {
+				rotateX -= ((yf - posY) / 100);
+			}
+			else {
+				rotateX += ((yf - posY) / 100);
+			}
+		}
+	}
+
+
+	posfX = xf;
+	posfY = yf;
+}
+
 /* Defne os cliques do mouse */
 void mouse(int button, int state, int x, int y) {
+	double xf, yf;
+	xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
+	yf = (200) * (__HEIGHT - y) / __HEIGHT;
+
 	/* Trata rolagem do mouse */
 	if (button == 4)
 		menuPos++;
@@ -274,10 +339,6 @@ void mouse(int button, int state, int x, int y) {
 	/* Trata parte do menu da tela */
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
 		if (x >= 3 * __WIDTH / 4) {
-			double xf, yf;
-			xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
-			yf = (200) * (__HEIGHT - y) / __HEIGHT;
-
 			/* Checa se ele esta clicando na caixa de importacao */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
 				clickedObj = -1;
@@ -375,9 +436,10 @@ void mouse(int button, int state, int x, int y) {
 		else {
 			clickedObj = -1;
 			typingField = -1;
+
 		}
 	}
-	
+
 }
 
 /* Desenha os eixos XYZ */
@@ -485,6 +547,12 @@ void menuProjection() {
 void displayObjects() {
 
 	objectsProjection();
+	/* Rotaciona a "camera" */
+	glTranslated(viewer[0], viewer[1], viewer[2]);
+	glRotated(rotateX, 1, 0, 0);
+	glRotated(rotateY, 0, 1, 0);
+	glTranslated(-viewer[0], -viewer[1], -viewer[2]);
+	/* Mostra os eixos e os objetos */
 	showBaseScreen();
 	showObjects();
 }
@@ -719,6 +787,7 @@ void display() {
 
 	resetView();
 	displayObjects();
+
 	displayMenu();
 
 	deltaTime += glutGet(GLUT_ELAPSED_TIME) - timeStart;
@@ -742,6 +811,7 @@ void timer(int) {
 	glutPostRedisplay();
 
 	glutTimerFunc(1000.0f/ 60, timer, 0);
+
 }
 
 /* Inicializa uma tela vazia apenas com os eixos */

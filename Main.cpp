@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("Trabalho 3");
 
 	initialize();
-
+	glutPassiveMotionFunc(passiveMouse);
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 	glutReshapeFunc(reshape);
