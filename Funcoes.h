@@ -371,11 +371,13 @@ void mouse(int button, int state, int x, int y) {
 				typingField = -1;
 			}
 		}
+		/* Trata a parte dos objetos da tela */
+		else {
+			clickedObj = -1;
+			typingField = -1;
+		}
 	}
-	/* Trata a parte dos objetos da tela */
-	else {
-		
-	}
+	
 }
 
 /* Desenha os eixos XYZ */
