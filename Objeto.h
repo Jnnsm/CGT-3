@@ -195,12 +195,15 @@ public:
 		fstream file;
 		string line;
 		vector<string> aux;
+		
 
 		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
 
 		Trio<double> Taux(0, 0, 0);
 		Duo<double> Daux(0, 0);
 		Trio<Trio<double>> TDaux(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
+		string linePiece = "";
+		stringstream ssPiece;
 
 		file.open(fileName.c_str(), fstream::in | fstream::binary);
 
@@ -243,26 +246,27 @@ public:
 				vt.push_back(Daux);
 			}
 			else if (line == "f") {
-				getline(file, line, '/');
-				istringstream(line) >> TDaux.data[0].data[0];
-				getline(file, line, ' ');
-				istringstream(line) >> TDaux.data[0].data[1];
+				int i = 0, j = 0;
+				TDaux.altera(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
+				while (i < 3 && file >> line) {
+					
+					ssPiece.str("");
+					ssPiece.clear();
+					ssPiece.str((line + "/"));
+					j = 0;
+					while (j < 3 && getline(ssPiece, linePiece, '/')) {
+						istringstream(linePiece) >> TDaux.data[i].data[j];
+						j++;
+					}
+					i++;
 
-				getline(file, line, '/');
-				istringstream(line) >> TDaux.data[1].data[0];
-				getline(file, line, ' ');
-				istringstream(line) >> TDaux.data[1].data[1];
-
-				getline(file, line, '/');
-				istringstream(line) >> TDaux.data[2].data[0];
-				getline(file, line);
-				istringstream(line) >> TDaux.data[2].data[1];
-				
+				}
 				f.push_back(TDaux);
 			}
 			else
 				getline(file, line);
 		}
+		
 		file.close();
 	}
 
