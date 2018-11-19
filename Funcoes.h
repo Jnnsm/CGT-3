@@ -339,21 +339,30 @@ void mouse(int button, int state, int x, int y) {
 	/* Trata parte do menu da tela */
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
 		if (x >= 3 * __WIDTH / 4) {
+
 			/* Checa se ele esta clicando na caixa de importacao */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
 				clickedObj = -1;
 				typingField = 0;
 			}
+			/* Checa se eles esta clicando na caixa de carregar */
+			else if (xf >= 20 && yf >= 173 && xf <= 60 && yf <= 179) {
+				clickedObj = -1;
+				typingField = -1;
+				Quad<double> aux((double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), (double)rand() / (RAND_MAX), 0.5);
+				createObj(nameBox, aux);
+				nameBox = "";
+			}
 			/* Se for clicado em alguma caixa de algum objeto*/
-			else if (xf >= 20.0f / 3 && xf <= 60 && yf <= 175) {
+			else if (xf >= 20.0f / 3 && xf <= 60 && yf <= 168) {
 				/* Calcula pelo ortho e pelo movimento do menu qual objeto foi clicado */
-				double aux = ((yf - 140 + menuPos) / -40) + 0.875;
+				double aux = ((yf - 133 + menuPos) / -40) + 0.875;
 
 				if (trunc(aux) == trunc(aux + 0.125) && aux < objs.size()) {
 					clickedObj = trunc(aux);
 				
 					/* Caso a visibilidade do objeto seja alterada */
-					if (xf>= 53 && xf <= 58 && yf >= 175 - clickedObj*40 - 6 - menuPos && yf <= 175 - clickedObj * 40 - 1 - menuPos) {
+					if (xf>= 53 && xf <= 58 && yf >= 168 - clickedObj*40 - 6 - menuPos && yf <= 168 - clickedObj * 40 - 1 - menuPos) {
 						objs.at(clickedObj).visible = !objs.at(clickedObj).visible;
 					}
 
@@ -362,7 +371,7 @@ void mouse(int button, int state, int x, int y) {
 					/* Checa em qual coluna esta (da esquerda para a direita) e dentro checa em qual linha */
 					else if (xf >= 12 && xf <= 22) {
 
-						if (yf >= 161 - (clickedObj * 40 + 5) && yf <= 161 - (clickedObj * 40)) {
+						if (yf >= 154 - (clickedObj * 40 + 5) && yf <= 154 - (clickedObj * 40)) {
 							typingField = 3;
 						}
 						else {
@@ -370,13 +379,13 @@ void mouse(int button, int state, int x, int y) {
 						}
 					}
 					else if (xf >= 24 && xf <= 34) {
-						if (yf >= 168 - (clickedObj * 40 + 5) - menuPos && yf <= 168 - (clickedObj * 40) - menuPos ) {
+						if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos ) {
 							typingField = 0;
 						}
-						else if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos ) {
+						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos ) {
 							typingField = 4;
 						}
-						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
+						else if (yf >= 147 - (clickedObj * 40 + 5) - menuPos && yf <= 147 - (clickedObj * 40) - menuPos) {
 							typingField = 7;
 						}
 						else {
@@ -384,13 +393,13 @@ void mouse(int button, int state, int x, int y) {
 						}
 					}
 					else if (xf >= 36 && xf <= 46) {
-						if (yf >= 168 - (clickedObj * 40 + 5) - menuPos && yf <= 168 - (clickedObj * 40) - menuPos) {
+						if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos) {
 							typingField = 1;
 						}
-						else if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos) {
+						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
 							typingField = 5;
 						}
-						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
+						else if (yf >= 147 - (clickedObj * 40 + 5) - menuPos && yf <= 147 - (clickedObj * 40) - menuPos) {
 							typingField = 8;
 						}
 						else {
@@ -398,16 +407,16 @@ void mouse(int button, int state, int x, int y) {
 						}
 					}
 					else if (xf >= 48 && xf <= 58) {
-						if (yf >= 168 - (clickedObj * 40 + 5) - menuPos && yf <= 168 - (clickedObj * 40) - menuPos) {
+						if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos) {
 							typingField = 2;
 						}
-						else if (yf >= 161 - (clickedObj * 40 + 5) - menuPos && yf <= 161 - (clickedObj * 40) - menuPos) {
+						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
 							typingField = 6;
 						}
-						else if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
+						else if (yf >= 147 - (clickedObj * 40 + 5) - menuPos && yf <= 147 - (clickedObj * 40) - menuPos) {
 							typingField = 9;
 						}
-						else if (yf >= 147 - (clickedObj * 40 + 5) - menuPos && yf <= 147 - (clickedObj * 40) - menuPos) {
+						else if (yf >= 140 - (clickedObj * 40 + 5) - menuPos && yf <= 140 - (clickedObj * 40) - menuPos) {
 							typingField = 10;
 						}
 						else {
@@ -596,13 +605,13 @@ void displayMenu() {
 			0.0, 1.0, 0.0
 		);
 
-		/* Desenha cada quadrado para exemplo da caixa de cada objeto */
+		/* Desenha cada quadrado para caixa de objetos */
 		int pos = 0;
 		for (int i = 0; i < objs.size(); i++) {
 			pos = i * 40;
 
 			/* Desenha apenas se ele estiver a baixo da barra que importa objetos */
-			if (180 - pos - 5 - menuPos <= 180) {
+			if (173 - pos - 5 - menuPos <= 173) {
 				/* Desenha caixa de fundo com a cor do objeto */
 				
 				if(clickedObj != i)
@@ -610,14 +619,14 @@ void displayMenu() {
 				else {
 					glColor4f(objs.at(i).rgba.data[0], objs.at(i).rgba.data[1], objs.at(i).rgba.data[2], 1);
 				}
-				glRectd(20.0f / 3, 180 - pos - 40, 60, 180 - (pos + 5));
+				glRectd(20.0f / 3, 173 - pos - 40, 60, 173 - (pos + 5));
 
 				glColor4f(0, 0, 0, 1);
 
 				/* Desenha o nome do objeto */
 				glPushMatrix();
 
-					glTranslated(23.0f / 3, 175 - pos - 5, 0);
+					glTranslated(23.0f / 3, 168 - pos - 5, 0);
 					glScaled(0.035, 0.035, 0);
 					glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(objs.at(i).name).c_str());
 
@@ -629,11 +638,11 @@ void displayMenu() {
 				else {
 					glColor3f(1, 1, 1);
 				}
-				glRectd(53, 175 - pos - 6, 58, 175 - pos - 1);
+				glRectd(53, 168 - pos - 6, 58, 168 - pos - 1);
 
 				/* Desenha as caixas relacionadas com translacaoo e seu label */
 
-				drawBoxAndLabel(23.0f / 3, 60, 168 - (pos + 5), 168 - pos, "T: ", 3);
+				drawBoxAndLabel(23.0f / 3, 60, 161 - (pos + 5), 161 - pos, "T: ", 3);
 				
 				/* Escreve o valor nas caixas */
 				stringstream ss;
@@ -644,7 +653,7 @@ void displayMenu() {
 					ss << objs.at(i).translate.data[j];
 					glPushMatrix();
 					
-						glTranslated(60 - 12* (2-j) - 12 + 0.7, 168 - pos - 5 + 0.5, 0);
+						glTranslated(60 - 12* (2-j) - 12 + 0.7, 161 - pos - 5 + 0.5, 0);
 						glScaled(0.035, 0.035, 0);
 						if(clickedObj == i && typingField == j)
 							glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
@@ -658,7 +667,7 @@ void displayMenu() {
 
 				/* Desenha as caixas relacionadas com rota��o e seu label */
 
-				drawBoxAndLabel(23.0f / 3, 60, 161 - (pos + 5), 161 - pos, "R: ", 4);
+				drawBoxAndLabel(23.0f / 3, 60, 154 - (pos + 5), 154 - pos, "R: ", 4);
 
 				/* Escreve o valor nas caixas */
 
@@ -668,7 +677,7 @@ void displayMenu() {
 					ss << objs.at(i).rotate.data[j];
 					glPushMatrix();
 
-					glTranslated(60 - 12 * (3-j) - 12 + 0.7, 161 - pos - 5 + 0.5, 0);
+					glTranslated(60 - 12 * (3-j) - 12 + 0.7, 154 - pos - 5 + 0.5, 0);
 					glScaled(0.035, 0.035, 0);
 					if (clickedObj == i && typingField-3 == j)
 						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
@@ -681,7 +690,7 @@ void displayMenu() {
 				glColor4d(0, 0, 0, 1);
 
 				/* Desenha as caixas relacionadas com escala e seu label */
-				drawBoxAndLabel(23.0f / 3, 60, 154 - (pos + 5), 154 - pos, "E: ", 3);
+				drawBoxAndLabel(23.0f / 3, 60, 147 - (pos + 5), 147 - pos, "E: ", 3);
 
 				/* Escreve o valor nas caixas */
 
@@ -691,7 +700,7 @@ void displayMenu() {
 					ss << objs.at(i).scale.data[j];
 					glPushMatrix();
 
-					glTranslated(60 - 12 * (2-j) - 12 + 0.7, 154 - pos - 5 + 0.5, 0);
+					glTranslated(60 - 12 * (2-j) - 12 + 0.7, 147 - pos - 5 + 0.5, 0);
 					glScaled(0.035, 0.035, 0);
 
 					if (clickedObj == i && typingField-7 == j)
@@ -706,7 +715,7 @@ void displayMenu() {
 
 				/* Desenha as caixas relacionadas com transparencia e seu label */
 
-				drawBoxAndLabel(23.0f / 3, 60, 147 - (pos + 5), 147 - pos, "Alpha: ", 1);
+				drawBoxAndLabel(23.0f / 3, 60, 140 - (pos + 5), 140 - pos, "Alpha: ", 1);
 
 				/* Escreve o valor nas caixas */
 
@@ -715,7 +724,7 @@ void displayMenu() {
 				ss << objs.at(i).rgba.data[3];
 				glPushMatrix();
 
-					glTranslated(60 - 12 + 0.7, 147 - pos - 5 + 0.5, 0);
+					glTranslated(60 - 12 + 0.7, 140 - pos - 5 + 0.5, 0);
 					glScaled(0.035, 0.035, 0);
 					if (clickedObj == i && typingField == 10)
 						glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)valueBox.c_str());
@@ -747,6 +756,20 @@ void displayMenu() {
 		glScaled(0.035, 0.035, 0);
 		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)(nameBox + "_").c_str());
 	glPopMatrix();
+
+	/* Caixa para carregar o arquivo */
+
+	glColor4d(0, 0, 0, 0.8);
+	glRectd(20, 173, 60, 179);
+
+	glPushMatrix();
+		glColor4d(0, 1, 0, 1);
+		glTranslated(31 , 174.5, 0);
+		glScaled(0.035, 0.035, 0);
+		glutStrokeString(GLUT_STROKE_ROMAN, (unsigned char*)"Carregar");
+	glPopMatrix();
+
+
 
 	/* Escreve a quantidade de tempo para desenhar e a quantidade de poly na parte de baixo da tela */
 	glPushMatrix();
