@@ -4,6 +4,15 @@
 #include "Objeto.h"
 #include "Funcoes.h"
 
+/*
+*	Instrucoes:
+*	Rolagem de menu: teclas i e k e roda do mouse
+*	Mover a câmera: W A S D
+*	Deletar objeto: DEL
+*	Mover direção da visão: X e Y e arrastar o mouse (usar X e Y para desabilitar, por favor não usar os dois juntos. Não mesmo.)
+*	Modo wire: V
+*/
+
 using namespace std;
 
 /* Vector com v�rios objetos a serem desenhados */

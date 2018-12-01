@@ -40,16 +40,21 @@
     <Media Include="Gabumon.obj">
       <Filter>Resource Files</Filter>
     </Media>
+    <Media Include="buda.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="buddha.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Handgun.mtl" />
+    <Media Include="roadBike.obj" />
+    <Media Include="sportsCar.obj" />
+    <Media Include="Handgun.obj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="buda.obj">
+    <None Include="sportsCar.mtl">
       <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="buddha.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
+    </None>
   </ItemGroup>
 </Project>

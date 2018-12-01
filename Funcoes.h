@@ -19,7 +19,6 @@ double timeCounter = 0;
 /* Representa o scroll do menu */
 int menuPos = 0;
 
-
 /* Aspect Rato da tela e posi��o do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
 GLdouble viewer[] = { 3.0, 3.0, 6.0 };
@@ -57,7 +56,6 @@ void createObj(string fileName, Quad<double> color) {
 	}
 }
 
-#endif
 
 /* Define os comandos do teclado				 */
 /* i - k = comandos que movem o "menu"			 */
@@ -158,11 +156,12 @@ void keyboard(unsigned char key, int x, int y) {
 				dragY = !dragY;
 				break;
 			case 'v': 
-				if(viewMode == GL_TRIANGLES)
-					viewMode = GL_LINES;
+				if (viewMode == GL_TRIANGLES)
+					viewMode = GL_LINE_LOOP;
 				else
 					viewMode = GL_TRIANGLES;
 				break;
+
 			case 'i':
 				menuPos--;
 				break;
@@ -277,7 +276,7 @@ void keyboard(unsigned char key, int x, int y) {
 	}
 	glutPostRedisplay();
 }
-
+/* Calcula o arrastar do mouse */
 void passiveMouse(int x, int y) {
 	double xf, yf;
 	xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
@@ -299,6 +298,7 @@ void passiveMouse(int x, int y) {
 				rotateY += ((xf - posX) / 100);
 			}
 		}
+		posfX = xf;
 	}
 	if (dragY) {
 
@@ -318,11 +318,8 @@ void passiveMouse(int x, int y) {
 				rotateX += ((yf - posY) / 100);
 			}
 		}
+		posfY = yf;
 	}
-
-
-	posfX = xf;
-	posfY = yf;
 }
 
 /* Defne os cliques do mouse */
@@ -339,7 +336,7 @@ void mouse(int button, int state, int x, int y) {
 	/* Trata parte do menu da tela */
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
 		if (x >= 3 * __WIDTH / 4) {
-
+			
 			/* Checa se ele esta clicando na caixa de importacao */
 			if (xf >= 20.0f / 3 && yf >= 180 && xf <= 60 && yf <= 188) {
 				clickedObj = -1;
@@ -355,6 +352,9 @@ void mouse(int button, int state, int x, int y) {
 			}
 			/* Se for clicado em alguma caixa de algum objeto*/
 			else if (xf >= 20.0f / 3 && xf <= 60 && yf <= 168) {
+
+				//cout << xf << " " << yf << endl;
+
 				/* Calcula pelo ortho e pelo movimento do menu qual objeto foi clicado */
 				double aux = ((yf - 133 + menuPos) / -40) + 0.875;
 
@@ -364,14 +364,14 @@ void mouse(int button, int state, int x, int y) {
 					/* Caso a visibilidade do objeto seja alterada */
 					if (xf>= 53 && xf <= 58 && yf >= 168 - clickedObj*40 - 6 - menuPos && yf <= 168 - clickedObj * 40 - 1 - menuPos) {
 						objs.at(clickedObj).visible = !objs.at(clickedObj).visible;
+						typingField = -1;
 					}
 
 					/* Esta na 'caixa' em x que envolve todas as caixas menores de rotacao, translacao, etc... */
 					
 					/* Checa em qual coluna esta (da esquerda para a direita) e dentro checa em qual linha */
 					else if (xf >= 12 && xf <= 22) {
-
-						if (yf >= 154 - (clickedObj * 40 + 5) && yf <= 154 - (clickedObj * 40)) {
+						if (yf >= 154 - (clickedObj * 40 + 5) - menuPos && yf <= 154 - (clickedObj * 40) - menuPos) {
 							typingField = 3;
 						}
 						else {
@@ -485,28 +485,31 @@ void showObjects() {
 			glRotatef((*o).rotate.data[0], (*o).rotate.data[1], (*o).rotate.data[2], (*o).rotate.data[3]);
 
 			glColor4f((*o).rgba.data[0], (*o).rgba.data[1], (*o).rgba.data[2], (*o).rgba.data[3]);
-			glBegin(viewMode);
+			
+			
 			for (int i = 0; i < (*o).f.size(); i++) {
+				
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
-				glVertex3f(
+				glBegin(viewMode);
+					glVertex3f(
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[2]
 				);
-
+			
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[2]
 				);
-
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[2]
 				);
+				glEnd();
 			}
-			glEnd();
+			
 
 			glPopMatrix();
 		}
@@ -551,10 +554,33 @@ void menuProjection() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+void lightExample() {
+	GLfloat mat_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
+	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_shininess[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+	GLfloat white_light[] = { 1.0, 1.0, 1.0, 0.0 };
+	GLfloat red_light[] = { 1.0, 0.0, 1.0, 0.0 };
 
+
+
+	 //   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	//    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
+	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	//   glLightfv(GL_LIGHT0, GL_AMBIENT, mat_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, red_light);
+	//glLightfv(GL_LIGHT0, GL_AMBIENT, mat_ambient);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+}
 /* Chama o necess�rio para mostrar os objetos */
 void displayObjects() {
-
+	lightExample();
 	objectsProjection();
 	/* Rotaciona a "camera" */
 	glTranslated(viewer[0], viewer[1], viewer[2]);
@@ -850,3 +876,4 @@ void initialize() {
 	glutTimerFunc(1000.0f/60, timer, 0);
 }
 
+#endif

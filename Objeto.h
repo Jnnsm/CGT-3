@@ -8,6 +8,7 @@
 #include <sstream>
 #include <thread>
 #include <time.h>
+#include <math.h>
 
 using namespace std;
 
@@ -187,6 +188,8 @@ public:
 		read(fileName);
 
 		this->rgba.altera(rgba.data[0], rgba.data[1], rgba.data[2], rgba.data[3]);
+
+		cout << name << " " << mtl << " " << s << " v " << v.size() << " vn " << vn.size() << " vt " << vt.size() << " f " << f.size() << endl;
 	}
 
 	void read(string fileName) {
@@ -210,7 +213,6 @@ public:
 		/* Checa se o arquivo existe de fato */
 		if (!file.good())
 			throw 1;
-
 		while (file >> line) {
 			if (line == "usemtl" || line == "mtllib") {
 				getline(file, line);
@@ -246,6 +248,7 @@ public:
 				vt.push_back(Daux);
 			}
 			else if (line == "f") {
+				
 				int i = 0, j = 0;
 				TDaux.altera(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
 				while (i < 3 && file >> line) {
@@ -256,6 +259,8 @@ public:
 					j = 0;
 					while (j < 3 && getline(ssPiece, linePiece, '/')) {
 						istringstream(linePiece) >> TDaux.data[i].data[j];
+						if (TDaux.data[i].data[j] < 0)
+							TDaux.data[i].data[j] = v.size() + TDaux.data[i].data[j];
 						j++;
 					}
 					i++;
