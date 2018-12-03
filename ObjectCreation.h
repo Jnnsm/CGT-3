@@ -16,7 +16,7 @@ void createObj(string fileName, Quad<double> color) {
 		objs.push_back(dr);
 	}
 	catch (int e) {
-		cerr << "File does not exist" << endl;
+		cerr << "Algum arquivo está faltando" << endl;
 	}
 }
 

@@ -58,10 +58,18 @@
     <Media Include="buddha.obj">
       <Filter>Resource Files</Filter>
     </Media>
-    <Media Include="Handgun.mtl" />
-    <Media Include="roadBike.obj" />
-    <Media Include="sportsCar.obj" />
-    <Media Include="Handgun.obj" />
+    <Media Include="Handgun.mtl">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Handgun.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="roadBike.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="sportsCar.obj">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

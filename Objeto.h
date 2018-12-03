@@ -7,6 +7,9 @@
 #include <sstream>
 #include <GL/glut.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 using namespace std;
 
 /* Implementação de uma função split para dividir umas string */
@@ -130,9 +133,15 @@ public:
 	Trio<double> scale;
 	bool visible;
 
+	/* Variáveis relacionadas com a textura */
+	unsigned char * img;
+	int width, height, channels;
+
 	/* Variáveis relacionadas com o arquivo */
 	string name;
 	string mtl;
+	string texImage;
+
 	bool s;
 	vector<Trio<double>> v;
 	vector<Trio<double>> vn;
@@ -160,7 +169,11 @@ public:
 		name = "";
 		rgba.altera(0, 0, 0, 1);
 
+		texImage = "";
+		width = height = channels = 0;
+
 		mtl = "";
+		stbi_image_free(img);
 		s = false;
 
 		v.clear();
@@ -185,8 +198,26 @@ public:
 		read(fileName);
 
 		this->rgba.altera(rgba.data[0], rgba.data[1], rgba.data[2], rgba.data[3]);
+	}
 
-		cout << name << " " << mtl << " " << s << " v " << v.size() << " vn " << vn.size() << " vt " << vt.size() << " f " << f.size() << endl;
+	void getImageFromMtl() {
+		fstream file;
+		string line;
+		vector<string> aux;
+		file.open(mtl.c_str(), fstream::in | fstream::binary);
+		if (!file.good())
+			throw 1;
+		while (file >> line) {
+			if (line == "map_Kd") {
+				getline(file, line);
+				aux = split(line, " ");
+				texImage = aux.at(aux.size()-1);
+			}
+		}
+
+
+		img = (unsigned char *) stbi_load(texImage.c_str() , &width, &height, &channels, 0);
+
 	}
 
 	void read(string fileName) {
@@ -211,9 +242,10 @@ public:
 		if (!file.good())
 			throw 1;
 		while (file >> line) {
-			if (line == "usemtl" || line == "mtllib") {
+			if (line == "mtllib") {
+				
 				getline(file, line);
-				mtl = split(line, "()").at(0);
+				mtl = split(line, "( )").at(0);
 			}
 
 			else if (line == "s") {
@@ -270,6 +302,9 @@ public:
 		}
 
 		file.close();
+
+		if(mtl != "")
+			getImageFromMtl();
 	}
 
 

@@ -58,7 +58,7 @@ void lightsOn() {
 		glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 1);
 		glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0);
 
-		glMaterialf(GL_FRONT, GL_SHININESS, 100);
+		glMaterialf(GL_FRONT, GL_SHININESS, 50);
 		glLightfv(GL_LIGHT1, GL_POSITION, viewer);
 		glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 15);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, blue_light);
@@ -78,7 +78,6 @@ void lightsOn() {
 		glLightfv(GL_LIGHT2, GL_POSITION, ceiling_position);
 		glLightfv(GL_LIGHT2, GL_DIFFUSE, red_light);
 	}
-
 }
 
 void lightsOff() {

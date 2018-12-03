@@ -5,9 +5,6 @@
 #include <vector>
 #include <cmath>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include "ObjectCreation.h"
 #include "SceneLights.h"
 #include "ScreenDraw.h"
@@ -56,7 +53,6 @@ short clickedObj = -1, typingField = -1;
 
 bool lightOne = false, lightTwo = false, lightThree = false;
 
-
 /* Sempre mantem a tela com um aspect definido para n�o distorcer o desenho */
 void reshape(int w, int h) {
 	if (h == 0)
@@ -85,7 +81,7 @@ void initialize() {
 	objectsProjection();
 	showBaseScreen();
 
-	createObj("Teapot.obj", Quad<double>(1, 1, 1, 1));
+	createObj("popotato.obj", Quad<double>(1, 1, 1, 1));
 
 	glutSwapBuffers();
 

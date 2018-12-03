@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
 
 
 	/* Ativa suaviza��es, canal alfa e teste de profundidade */
+	glEnable(GL_NORMALIZE);
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);

@@ -38,11 +38,34 @@ void showBaseScreen() {
 
 }
 
+/* Mostra um muro transparente */
+void displayWall() {
+	glColor4f(1, 1, 1, 0.5);
+
+	glBegin(viewMode);
+		glVertex3f(5, 5, 5);
+		glVertex3f(5, -5, 5);
+		glVertex3f(-5, -5, 5);
+	glEnd();
+}
+
 /* Desenha cada objeto na tela */
 void showObjects() {
 	poly = 0;
+	
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++) {
 		if ((*o).visible) {
+			glEnable(GL_TEXTURE_2D);
+
+
+			if ((*o).width > 0 && (*o).height > 0 && (*o).img) {
+				gluScaleImage(GL_TEXTURE_2D, (*o).width, (*o).height, GL_RGB, (*o).img, 1024, 1024, GL_RGB, (*o).img);
+
+				(*o).width = (*o).height = 1024;
+				
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (*o).width, (*o).height, 0, GL_RGB, GL_UNSIGNED_BYTE, (*o).img);
+			}
+
 			poly += (*o).f.size();
 			glPushMatrix();
 
@@ -93,19 +116,11 @@ void showObjects() {
 				glEnd();
 			}
 			glPopMatrix();
+			glDisable(GL_TEXTURE_2D);
 		}
-
 	}
 }
-/* Mostra um muro transparente */
-void displayWall() {
-	glPushMatrix();
-	glTranslated(0, 0, 3);
-	glScaled(0.5, 1, 0.01);
-	glColor4f(1, 1, 1, 0.8);
-	glutSolidCube(10);
-	glPopMatrix();
-}
+
 
 /* Define os modos de projecao e modelview a serem seguidos na parte da tela referente a exibi��o dos objetos */
 void objectsProjection() {
@@ -150,10 +165,11 @@ void displayObjects() {
 	glRotated(rotateY, 0, 1, 0);
 	glTranslated(-viewer[0], -viewer[1], -viewer[2]);
 
-
 	/* Mostra os eixos e os objetos */
 	showBaseScreen();
-	lightsOn();
+
+	if(lightOne || lightTwo || lightThree)
+		lightsOn();
 
 	showObjects();
 	displayWall();
