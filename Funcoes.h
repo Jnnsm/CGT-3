@@ -518,7 +518,7 @@ void showObjects() {
 
 /* Limpa a tela */
 void resetView() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
 }
@@ -554,33 +554,34 @@ void menuProjection() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+
 void lightExample() {
-	GLfloat mat_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
+	GLfloat white_light[] = { 1, 0, 0, 0 };
 	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_shininess[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-	GLfloat white_light[] = { 1.0, 1.0, 1.0, 0.0 };
-	GLfloat red_light[] = { 1.0, 0.0, 1.0, 0.0 };
-
-
-
-	 //   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	//    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	//   glLightfv(GL_LIGHT0, GL_AMBIENT, mat_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, red_light);
-	//glLightfv(GL_LIGHT0, GL_AMBIENT, mat_ambient);
-
+	GLfloat mat_shininess[] = { 100.0 };
+	GLfloat light_position[] = { -100.0, 0.0, 0.0, 2.0 };
+	
+	glShadeModel(GL_SMOOTH);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glEnable(GL_COLOR_MATERIAL);
-	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_DEPTH_TEST);
+
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+
+
 }
+
+void lightsOff() {
+	glDisable(GL_LIGHTING);
+}
+
+
 /* Chama o necess�rio para mostrar os objetos */
 void displayObjects() {
-	lightExample();
+	
 	objectsProjection();
 	/* Rotaciona a "camera" */
 	glTranslated(viewer[0], viewer[1], viewer[2]);
@@ -835,8 +836,9 @@ void display() {
 	int timeStart = glutGet(GLUT_ELAPSED_TIME);
 
 	resetView();
+	lightExample();
 	displayObjects();
-
+	lightsOff();
 	displayMenu();
 
 	deltaTime += glutGet(GLUT_ELAPSED_TIME) - timeStart;
@@ -866,10 +868,14 @@ void timer(int) {
 /* Inicializa uma tela vazia apenas com os eixos */
 void initialize() {
 	glClearColor(0, 0, 0, 1);
-	
+
+
+	/* Faz os desenhos iniciais */
 	resetView();
 	objectsProjection();
 	showBaseScreen();
+
+	createObj("Teapot.obj", Quad<double>(1, 1, 1, 1));
 
 	glutSwapBuffers();
 
