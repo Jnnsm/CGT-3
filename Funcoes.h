@@ -1,13 +1,19 @@
 #ifndef FUNCOES_H__
 #define FUNCOES_H__
+
 #include <GL/freeglut.h>
 #include <vector>
 #include <cmath>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include "ObjectCreation.h"
 #include "SceneLights.h"
 #include "ScreenDraw.h"
 #include "inputControl.h"
 #include "Objeto.h"
+
 
 extern vector<Objeto> objs;
 extern double __WIDTH, __HEIGHT;
