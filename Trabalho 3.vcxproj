@@ -116,7 +116,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Funcoes.h" />
+    <ClInclude Include="InputControl.h" />
+    <ClInclude Include="ObjectCreation.h" />
     <ClInclude Include="Objeto.h" />
+    <ClInclude Include="SceneLights.h" />
+    <ClInclude Include="ScreenDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

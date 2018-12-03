@@ -2,18 +2,14 @@
 #define OBJETO_H__
 
 #include <vector>
-#include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <thread>
-#include <time.h>
-#include <math.h>
 #include <GL/glut.h>
 
 using namespace std;
 
-/* Implementação de uma função split para dividir umas string */ 
+/* Implementação de uma função split para dividir umas string */
 
 vector<string> split(string a, string b) {
 	string aux = "";
@@ -54,12 +50,12 @@ class Duo {
 	}
 public:
 	T data[2];
-	
-	Duo(){
+
+	Duo() {
 
 	}
 	Duo(T p, T s) {
-		altera(p,s);
+		altera(p, s);
 	}
 
 	void altera(T p, T s) {
@@ -142,7 +138,7 @@ public:
 	vector<Trio<double>> vn;
 	vector<Duo<double>> vt;
 	vector<Trio<Trio<double>>> f;
-	
+
 	Objeto() {
 		/* Nao faz nada */
 	}
@@ -162,7 +158,7 @@ public:
 		scale.altera(1, 1, 1);
 
 		name = "";
-		rgba.altera(0,0,0,1);
+		rgba.altera(0, 0, 0, 1);
 
 		mtl = "";
 		s = false;
@@ -199,7 +195,7 @@ public:
 		fstream file;
 		string line;
 		vector<string> aux;
-		
+
 
 		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
 
@@ -249,11 +245,11 @@ public:
 				vt.push_back(Daux);
 			}
 			else if (line == "f") {
-				
+
 				int i = 0, j = 0;
 				TDaux.altera(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
 				while (i < 3 && file >> line) {
-					
+
 					ssPiece.str("");
 					ssPiece.clear();
 					ssPiece.str((line + "/"));
@@ -272,7 +268,7 @@ public:
 			else
 				getline(file, line);
 		}
-		
+
 		file.close();
 	}
 
@@ -282,7 +278,6 @@ public:
 	}
 
 };
-
 
 
 

@@ -21,7 +21,7 @@ double __WIDTH = 800, __HEIGHT = 600;
 
 int main(int argc, char **argv) {
 	srand(time(NULL));
-	
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 	glutMouseFunc(mouse);
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
-	
+
 
 	/* Ativa suaviza��es, canal alfa e teste de profundidade */
 	glEnable(GL_LINE_SMOOTH);
@@ -44,10 +44,10 @@ int main(int argc, char **argv) {
 	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
 	glEnable(GL_DEPTH_TEST);
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+
 
 	glutMainLoop();
 
