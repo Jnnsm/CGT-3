@@ -9,6 +9,7 @@
 #include <thread>
 #include <time.h>
 #include <math.h>
+#include <GL/glut.h>
 
 using namespace std;
 

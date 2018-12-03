@@ -21,9 +21,9 @@ int menuPos = 0;
 
 /* Aspect Rato da tela e posi��o do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
-GLdouble viewer[] = { 3.0, 3.0, 6.0 };
-GLdouble lookPoint[] = { 0.0, 0.0, 0.0 };
-GLdouble upVector[] = { 0.0, 1.0, 0.0 };
+GLfloat viewer[] = { 3.0, 3.0, 6.0, 50000000 };
+GLfloat lookPoint[] = { 0.0, 0.0, 0.0 };
+GLfloat upVector[] = { 0.0, 1.0, 0.0 };
 
 /* Modo de exibição do objeto */
 GLint viewMode = GL_TRIANGLES;
@@ -43,6 +43,8 @@ string nameBox = "", valueBox = "";
 /* typingField = 0 representa a caixa de importa��o caso clickedObj = -1		*/
 /* typingField = 0 e <= 10 representam caixas do objeto quanto clickedObj != -1 */
 short clickedObj = -1, typingField = -1;
+
+bool lightOne = false, lightTwo = false, lightThree = false;
 
 /* Fun��o para carregar objeto */
 void createObj(string fileName, Quad<double> color) {
@@ -146,7 +148,29 @@ void keyboard(unsigned char key, int x, int y) {
 		GLdouble n[] = { 0.0, 0.0, 0.0 };
 		GLdouble u[] = { 0.0, 0.0, 0.0 };
 		GLdouble norm;
-		switch (key) { 
+		switch (key) {
+			case '1':
+				lightOne = !lightOne;
+				if(lightOne)
+					glEnable(GL_LIGHT0);
+				else
+					glDisable(GL_LIGHT0);
+				break;
+			case '2':
+				lightTwo = !lightTwo;
+				if (lightTwo)
+					glEnable(GL_LIGHT1);
+				else
+					glDisable(GL_LIGHT1);
+				break;
+			case '3':
+				lightThree = !lightThree;
+				if (lightThree)
+					glEnable(GL_LIGHT2);
+				else
+					glDisable(GL_LIGHT2);
+				break;
+
 			case 'x':
 				posX = 0;
 				dragX = !dragX;
@@ -161,7 +185,6 @@ void keyboard(unsigned char key, int x, int y) {
 				else
 					viewMode = GL_TRIANGLES;
 				break;
-
 			case 'i':
 				menuPos--;
 				break;
@@ -491,17 +514,34 @@ void showObjects() {
 				
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
 				glBegin(viewMode);
-					glVertex3f(
+				if((*o).vn.size() > 0)
+					glNormal3f(
+						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[0],
+						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[1],
+						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[2]
+					);
+				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[2]
 				);
-			
+				if ((*o).vn.size() > 0)
+					glNormal3f(
+						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[0],
+						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[1],
+						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[2]
+					);
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[2]
 				);
+				if ((*o).vn.size() > 0)
+					glNormal3f(
+						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[0],
+						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[1],
+						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[2]
+					);
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[1],
@@ -556,21 +596,43 @@ void menuProjection() {
 }
 
 void lightExample() {
-	GLfloat white_light[] = { 1, 0, 0, 0 };
-	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_shininess[] = { 100.0 };
-	GLfloat light_position[] = { -100.0, 0.0, 0.0, 2.0 };
-	
+	GLfloat red_light[] = { 1.0, 0.0, 0.0, 0.0 };
+	GLfloat blue_light[] = { 0.0, 0.0, 1.0, 0.0 };
+
+	GLfloat position[] = { 0,0,0,1 };
+	GLfloat global_position[] = { 0, 1, 0, 0 };
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+	if (lightOne) {
+		
 
+		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1);
+		glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0);
+		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0);
+
+		glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180);
+		glLightfv(GL_LIGHT0, GL_POSITION, global_position);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, red_light);
+	}
+	if (lightTwo) {
+
+		glMaterialf(GL_FRONT, GL_SHININESS, 50);
+		glLightfv(GL_LIGHT1, GL_POSITION, position);
+		glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 15);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, blue_light);
+	}
+
+	if (lightThree) {
+
+		glMaterialf(GL_FRONT, GL_SHININESS, 50);
+		glLightfv(GL_LIGHT2, GL_POSITION, position);
+		glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 15);
+		glLightfv(GL_LIGHT2, GL_SPECULAR, blue_light);
+	}
 
 }
 
@@ -834,10 +896,11 @@ void display() {
 	}
 
 	int timeStart = glutGet(GLUT_ELAPSED_TIME);
-
+	
 	resetView();
 	lightExample();
 	displayObjects();
+	
 	lightsOff();
 	displayMenu();
 

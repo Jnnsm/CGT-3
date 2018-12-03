@@ -1,5 +1,5 @@
 #include <iostream>
-#include <GL/freeglut.h>
+#include <GL/glut.h>
 #include <time.h>
 #include "Objeto.h"
 #include "Funcoes.h"
