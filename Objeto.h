@@ -137,6 +137,7 @@ public:
 	/* Variáveis relacionadas com a textura */
 	unsigned char * img;
 	int width, height, channels;
+	GLuint t;
 
 	/* Variáveis relacionadas com o arquivo */
 	string name;
@@ -169,7 +170,7 @@ public:
 
 		name = "";
 		rgba.altera(0, 0, 0, 1);
-
+		t = 0;
 		texImage = "";
 		width = height = channels = 0;
 		img = (unsigned char *)"";
@@ -218,8 +219,14 @@ public:
 				texImage = aux.at(aux.size()-1);
 			}
 		}
-
+		
 		img = stbi_load(texImage.c_str(), &width, &height, &channels, 0);
+
+		glGenTextures(1, &t);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glBindTexture(GL_TEXTURE_2D, t);
+		
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
 	}
 
 	void read(string fileName) {
@@ -275,6 +282,7 @@ public:
 					file >> line;
 					istringstream(line) >> Daux.data[i];
 				}
+				
 				vt.push_back(Daux);
 			}
 			else if (line == "f") {

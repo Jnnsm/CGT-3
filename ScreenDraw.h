@@ -50,6 +50,7 @@ void displayWall() {
 }
 /* Desenha cada objeto na tela */
 void showObjects() {
+
 	glEnable(GL_BLEND);
 
 	poly = 0;
@@ -57,18 +58,19 @@ void showObjects() {
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++) {
 		
 		if ((*o).visible) {
+			glBindTexture(GL_TEXTURE_2D, (*o).t);
 			glEnable(GL_TEXTURE_2D);
 			if ((*o).width > 0 && (*o).height > 0 && (*o).img != NULL) {
+				
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (*o).width, (*o).height, 0, GL_RGB, GL_UNSIGNED_BYTE, (*o).img);
+				//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, GL_LEQUAL);
 
 			}
 
 			poly += (*o).f.size();
 			glPushMatrix();
-
 			glScalef((*o).scale.data[0], (*o).scale.data[1], (*o).scale.data[2]);
 			glTranslatef((*o).translate.data[0], (*o).translate.data[1], (*o).translate.data[2]);
 			glRotatef((*o).rotate.data[0], (*o).rotate.data[1], (*o).rotate.data[2], (*o).rotate.data[3]);
@@ -77,58 +79,58 @@ void showObjects() {
 
 
 			for (int i = 0; i < (*o).f.size(); i++) {
-				if (i == 0) {
-					cout << (*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0] <<
-						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1] << endl;
-				}
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
+		
 				glBegin(viewMode);
-				if ((*o).vn.size() > 0)
-					glNormal3f(
-					(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[0],
-						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[1],
-						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[2]
-					);
 				if ((*o).vt.size() > 0) {
-					glTexCoord2f(
+					glTexCoord2d(
 						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0],
 						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1]
 					);
 				}
+				if ((*o).vn.size() > 0)
+					glNormal3f(
+						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[0],
+						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[1],
+						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[2]
+					);
+
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[2]
 				);
+
+				if ((*o).vt.size() > 0) {
+					glTexCoord2d(
+						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[0],
+						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
+					);
+				}
 				if ((*o).vn.size() > 0)
 					glNormal3f(
 					(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[0],
 						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[2]
 					);
-				if ((*o).vt.size() > 0) {
-					glTexCoord2f(
-						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[0],
-						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
-					);
-				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[2]
 				);
+
+				if ((*o).vt.size() > 0) {
+					glTexCoord2d(
+						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[0],
+						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
+					);
+				}
 				if ((*o).vn.size() > 0)
 					glNormal3f(
 					(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[0],
 						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[2]
 					);
-				if ((*o).vt.size() > 0) {
-					glTexCoord2f(
-						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[0],
-						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
-					);
-				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[1],
