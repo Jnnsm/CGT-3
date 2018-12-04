@@ -7,9 +7,9 @@
 #include "Objeto.h"
 
 extern int poly,
-		deltaTime,
-		frameCounter,
-		averageTime;
+deltaTime,
+frameCounter,
+averageTime;
 /* Limpa a tela */
 void resetView() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -43,27 +43,27 @@ void displayWall() {
 	glColor4f(1, 1, 1, 0.5);
 
 	glBegin(viewMode);
-		glVertex3f(5, 5, 5);
-		glVertex3f(5, -5, 5);
-		glVertex3f(-5, -5, 5);
+	glVertex3f(5, 5, 5);
+	glVertex3f(5, -5, 5);
+	glVertex3f(-5, -5, 5);
 	glEnd();
 }
-
 /* Desenha cada objeto na tela */
 void showObjects() {
+	glEnable(GL_BLEND);
+
 	poly = 0;
-	
+
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++) {
+		
 		if ((*o).visible) {
 			glEnable(GL_TEXTURE_2D);
+			if ((*o).width > 0 && (*o).height > 0 && (*o).img != NULL) {
 
-
-			if ((*o).width > 0 && (*o).height > 0 && (*o).img) {
-				gluScaleImage(GL_TEXTURE_2D, (*o).width, (*o).height, GL_RGB, (*o).img, 1024, 1024, GL_RGB, (*o).img);
-
-				(*o).width = (*o).height = 1024;
-				
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (*o).width, (*o).height, 0, GL_RGB, GL_UNSIGNED_BYTE, (*o).img);
+
 			}
 
 			poly += (*o).f.size();
@@ -77,7 +77,10 @@ void showObjects() {
 
 
 			for (int i = 0; i < (*o).f.size(); i++) {
-
+				if (i == 0) {
+					cout << (*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0] <<
+						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1] << endl;
+				}
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
 				glBegin(viewMode);
 				if ((*o).vn.size() > 0)
@@ -86,6 +89,12 @@ void showObjects() {
 						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[2]
 					);
+				if ((*o).vt.size() > 0) {
+					glTexCoord2f(
+						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0],
+						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1]
+					);
+				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
@@ -97,6 +106,12 @@ void showObjects() {
 						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[2]
 					);
+				if ((*o).vt.size() > 0) {
+					glTexCoord2f(
+						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[0],
+						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
+					);
+				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[1],
@@ -108,6 +123,12 @@ void showObjects() {
 						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[2]
 					);
+				if ((*o).vt.size() > 0) {
+					glTexCoord2f(
+						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[0],
+						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
+					);
+				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[1],
@@ -168,7 +189,7 @@ void displayObjects() {
 	/* Mostra os eixos e os objetos */
 	showBaseScreen();
 
-	if(lightOne || lightTwo || lightThree)
+	if (lightOne || lightTwo || lightThree)
 		lightsOn();
 
 	showObjects();

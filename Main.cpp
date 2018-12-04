@@ -1,8 +1,10 @@
 #include <iostream>
 #include <GL/glut.h>
 #include <time.h>
+#include <time.h>
 #include "Objeto.h"
 #include "Funcoes.h"
+
 
 /*
 *	Instrucoes:

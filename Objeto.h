@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <GL/glut.h>
+#include <string>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -171,9 +172,9 @@ public:
 
 		texImage = "";
 		width = height = channels = 0;
-
+		img = (unsigned char *)"";
 		mtl = "";
-		stbi_image_free(img);
+		//stbi_image_free(img);
 		s = false;
 
 		v.clear();
@@ -205,8 +206,11 @@ public:
 		string line;
 		vector<string> aux;
 		file.open(mtl.c_str(), fstream::in | fstream::binary);
+		
 		if (!file.good())
 			throw 1;
+
+		cout << mtl.c_str() << endl;
 		while (file >> line) {
 			if (line == "map_Kd") {
 				getline(file, line);
@@ -215,9 +219,7 @@ public:
 			}
 		}
 
-
-		img = (unsigned char *) stbi_load(texImage.c_str() , &width, &height, &channels, 0);
-
+		img = stbi_load(texImage.c_str(), &width, &height, &channels, 0);
 	}
 
 	void read(string fileName) {
@@ -243,9 +245,8 @@ public:
 			throw 1;
 		while (file >> line) {
 			if (line == "mtllib") {
-				
-				getline(file, line);
-				mtl = split(line, "( )").at(0);
+				file >> line;
+				mtl = split(line, " ").at(0);
 			}
 
 			else if (line == "s") {
@@ -300,9 +301,7 @@ public:
 			else
 				getline(file, line);
 		}
-
 		file.close();
-
 		if(mtl != "")
 			getImageFromMtl();
 	}
