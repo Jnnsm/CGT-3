@@ -11,6 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+
 using namespace std;
 
 /* Implementação de uma função split para dividir umas string */
@@ -219,14 +220,18 @@ public:
 				texImage = aux.at(aux.size()-1);
 			}
 		}
-		
+
+
+		glGenTextures(1, &t);
+		glBindTexture(GL_TEXTURE_2D, t);
+	
 		img = stbi_load(texImage.c_str(), &width, &height, &channels, 0);
 
 		glGenTextures(1, &t);
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glBindTexture(GL_TEXTURE_2D, t);
-		
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+		/*
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);*/
+		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, img);
 	}
 
 	void read(string fileName) {

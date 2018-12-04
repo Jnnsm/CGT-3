@@ -62,11 +62,10 @@ void showObjects() {
 			glEnable(GL_TEXTURE_2D);
 			if ((*o).width > 0 && (*o).height > 0 && (*o).img != NULL) {
 				
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-				//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, GL_LEQUAL);
-
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			}
 
 			poly += (*o).f.size();
@@ -85,7 +84,7 @@ void showObjects() {
 				if ((*o).vt.size() > 0) {
 					glTexCoord2d(
 						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0],
-						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1]
+						1-(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1]
 					);
 				}
 				if ((*o).vn.size() > 0)
@@ -104,7 +103,7 @@ void showObjects() {
 				if ((*o).vt.size() > 0) {
 					glTexCoord2d(
 						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[0],
-						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
+						1-(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
 					);
 				}
 				if ((*o).vn.size() > 0)
@@ -122,7 +121,7 @@ void showObjects() {
 				if ((*o).vt.size() > 0) {
 					glTexCoord2d(
 						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[0],
-						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
+						1-(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
 					);
 				}
 				if ((*o).vn.size() > 0)
