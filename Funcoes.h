@@ -8,7 +8,7 @@
 #include "ObjectCreation.h"
 #include "SceneLights.h"
 #include "ScreenDraw.h"
-#include "inputControl.h"
+#include "InputControl.h"
 #include "Objeto.h"
 
 
