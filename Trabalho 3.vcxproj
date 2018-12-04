@@ -144,6 +144,7 @@
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Media>
+    <None Include="Dragon.mtl" />
     <None Include="packages.config" />
     <None Include="sportsCar.mtl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -223,6 +224,9 @@
   </ItemGroup>
   <ItemGroup>
     <Object Include="popotato.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Texture2.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

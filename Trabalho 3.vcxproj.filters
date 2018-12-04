@@ -79,9 +79,15 @@
     <None Include="sportsCar.mtl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Dragon.mtl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Potato_diff.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Texture2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
