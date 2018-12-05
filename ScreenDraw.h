@@ -81,55 +81,57 @@ void showObjects() {
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
 		
 				glBegin(viewMode);
-				if ((*o).vt.size() > 0) {
-					glTexCoord2d(
-						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0],
-						1-(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1]
-					);
-				}
+
 				if ((*o).vn.size() > 0)
 					glNormal3f(
 						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[0],
 						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[0].data[2] - 1).data[2]
 					);
-
+				if ((*o).vt.size() > 0) {
+					glTexCoord2d(
+						(*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[0],
+						1 - (*o).vt.at((*o).f.at(i).data[0].data[1] - 1).data[1]
+					);
+				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[0].data[0] - 1).data[2]
 				);
 
-				if ((*o).vt.size() > 0) {
-					glTexCoord2d(
-						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[0],
-						1-(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
-					);
-				}
+
 				if ((*o).vn.size() > 0)
 					glNormal3f(
 					(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[0],
 						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[1].data[2] - 1).data[2]
 					);
+				if ((*o).vt.size() > 0) {
+					glTexCoord2d(
+						(*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[0],
+						1 - (*o).vt.at((*o).f.at(i).data[1].data[1] - 1).data[1]
+					);
+				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[1],
 					(*o).v.at((*o).f.at(i).data[1].data[0] - 1).data[2]
 				);
 
-				if ((*o).vt.size() > 0) {
-					glTexCoord2d(
-						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[0],
-						1-(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
-					);
-				}
+
 				if ((*o).vn.size() > 0)
 					glNormal3f(
 					(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[0],
 						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[1],
 						(*o).vn.at((*o).f.at(i).data[2].data[2] - 1).data[2]
 					);
+				if ((*o).vt.size() > 0) {
+					glTexCoord2d(
+						(*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[0],
+						1 - (*o).vt.at((*o).f.at(i).data[2].data[1] - 1).data[1]
+					);
+				}
 				glVertex3f(
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[0],
 					(*o).v.at((*o).f.at(i).data[2].data[0] - 1).data[1],

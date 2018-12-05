@@ -17,31 +17,19 @@ using namespace std;
 /* Implementa��o de uma fun��o split para dividir umas string */
 
 vector<string> split(string a, string b) {
-	string aux = "";
-	vector<string> result;
 
-	if (a.size() == 0 || b.size() == 0)
-		return result;
+	string buff{ "" };
+	vector<string> v;
 
-	for (int i = 0; i < a.size(); i++) {
-		bool add = true;
-		for (int j = 0; j < b.size(); j++) {
-			if (a[i] == b[j]) {
-				add = false;
-				break;
-			}
+	for (auto n : a)
+		for (auto m : b) {
+			if (n != m && n != '\n') buff += n;
+			else if (n == m && buff != "") { v.push_back(buff); buff = ""; }
 		}
-		if (!add) {
-			if (aux != "")
-				result.push_back(aux);
-			aux = "";
-		}
-		else
-			aux += a[i];
-	}
-	if (aux != "")
-		result.push_back(aux);
-	return result;
+	
+	if (buff != "") v.push_back(buff);
+
+	return v;
 }
 
 
@@ -212,27 +200,22 @@ public:
 		if (!file.good())
 			throw 1;
 
-		cout << mtl.c_str() << endl;
 		while (file >> line) {
 			if (line == "map_Kd") {
 				getline(file, line);
 				aux = split(line, " ");
-				texImage = aux.at(aux.size()-1);
+				texImage = aux.at(aux.size() - 1);
+				cout << texImage << endl;
 			}
 		}
-
-		cout << texImage << endl;
-
-		glGenTextures(1, &t);
-		glBindTexture(GL_TEXTURE_2D, t);
-	
+		
 		img = stbi_load(texImage.c_str(), &width, &height, &channels, 0);
 
 		glGenTextures(1, &t);
 		glBindTexture(GL_TEXTURE_2D, t);
-		/*
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);*/
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, img);
+		
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, img);
 	}
 
 	void read(string fileName) {
@@ -254,7 +237,6 @@ public:
 		file.open(fileName.c_str(), fstream::in | fstream::binary);
 
 		/* Checa se o arquivo existe de fato */
-		cout << fileName << endl;
 		if (!file.good())
 			throw 1;
 		while (file >> line) {
@@ -317,7 +299,7 @@ public:
 				getline(file, line);
 		}
 		file.close();
-		cout << mtl << endl;
+
 		if(mtl != "")
 			getImageFromMtl();
 	}

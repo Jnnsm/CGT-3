@@ -52,41 +52,17 @@
     <Media Include="Teapot.obj">
       <Filter>Resource Files</Filter>
     </Media>
-    <Media Include="Gabumon.obj">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="buda.obj">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="buddha.obj">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="Handgun.mtl">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="Handgun.obj">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="roadBike.obj">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="sportsCar.obj">
-      <Filter>Resource Files</Filter>
-    </Media>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="sportsCar.mtl">
+    <None Include="Dragon.mtl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Dragon.mtl">
+    <None Include="popotato.mtl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Potato_diff.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Texture2.png">
       <Filter>Resource Files</Filter>
     </Image>
