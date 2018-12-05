@@ -14,7 +14,7 @@
 
 using namespace std;
 
-/* Implementação de uma função split para dividir umas string */
+/* Implementaï¿½ï¿½o de uma funï¿½ï¿½o split para dividir umas string */
 
 vector<string> split(string a, string b) {
 	string aux = "";
@@ -70,7 +70,7 @@ public:
 
 };
 
-/* Classe para variáveis triplas */
+/* Classe para variï¿½veis triplas */
 
 template<class T>
 class Trio {
@@ -96,7 +96,7 @@ public:
 
 };
 
-/* Classe para variáveis quadruplas */
+/* Classe para variï¿½veis quadruplas */
 
 template<class T>
 class Quad {
@@ -128,19 +128,19 @@ public:
 
 class Objeto {
 public:
-	/* Variáveis relacionadas com o objeto */
+	/* Variï¿½veis relacionadas com o objeto */
 	Quad<double> rgba;
 	Trio<double> translate;
 	Quad<double> rotate;
 	Trio<double> scale;
 	bool visible;
 
-	/* Variáveis relacionadas com a textura */
+	/* Variï¿½veis relacionadas com a textura */
 	unsigned char * img;
 	int width, height, channels;
 	GLuint t;
 
-	/* Variáveis relacionadas com o arquivo */
+	/* Variï¿½veis relacionadas com o arquivo */
 	string name;
 	string mtl;
 	string texImage;
@@ -221,6 +221,7 @@ public:
 			}
 		}
 
+		cout << texImage << endl;
 
 		glGenTextures(1, &t);
 		glBindTexture(GL_TEXTURE_2D, t);
@@ -236,13 +237,13 @@ public:
 
 	void read(string fileName) {
 
-		/* Variáveis para auxilio do preenchimento */
+		/* Variï¿½veis para auxilio do preenchimento */
 		fstream file;
 		string line;
 		vector<string> aux;
 
 
-		/* Variáveis que guardam os valores do arquivo enquanto são lidas */
+		/* Variï¿½veis que guardam os valores do arquivo enquanto sï¿½o lidas */
 
 		Trio<double> Taux(0, 0, 0);
 		Duo<double> Daux(0, 0);
@@ -253,6 +254,7 @@ public:
 		file.open(fileName.c_str(), fstream::in | fstream::binary);
 
 		/* Checa se o arquivo existe de fato */
+		cout << fileName << endl;
 		if (!file.good())
 			throw 1;
 		while (file >> line) {
@@ -315,6 +317,7 @@ public:
 				getline(file, line);
 		}
 		file.close();
+		cout << mtl << endl;
 		if(mtl != "")
 			getImageFromMtl();
 	}

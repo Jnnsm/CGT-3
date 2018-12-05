@@ -13,6 +13,7 @@ extern double aspectRatio;
 extern int menuPos;
 
 extern GLfloat viewer[], lookPoint[], upVector[];
+extern const GLfloat worldUp[];
 
 extern GLint viewMode;
 
@@ -25,6 +26,18 @@ extern string nameBox, valueBox;
 extern short clickedObj, typingField;
 
 extern bool lightOne, lightTwo, lightThree;
+
+extern GLdouble yaw, pitch;
+
+void VectorialProd(const GLfloat* v1, const GLfloat* v2, GLfloat* u){
+	u[0] = (v1[1] * v2[2]) - (v2[1] * v1[2]);
+	u[1] = -((v1[0] * v2[2]) - (v2[0] * v1[2]));
+	u[2] = (v1[0] * v2[1]) - (v2[0] * v1[1]);
+}
+
+GLdouble VecNorm(const GLfloat* v1){
+	return sqrt(pow(v1[0], 2) + pow(v1[1], 2) + pow(v1[2], 2));
+}
 
 /* Define os comandos do teclado				 */
 /* i - k = comandos que movem o "menu"			 */
@@ -112,8 +125,8 @@ void keyboard(unsigned char key, int x, int y) {
 
 	}
 	else {
-		GLdouble n[] = { 0.0, 0.0, 0.0 };
-		GLdouble u[] = { 0.0, 0.0, 0.0 };
+		GLfloat n[] = { 0.0, 0.0, 0.0 };
+		GLfloat u[] = { 0.0, 0.0, 0.0 };
 		GLdouble norm;
 		GLdouble speed = 0.1;
 		switch (key) {
@@ -142,10 +155,12 @@ void keyboard(unsigned char key, int x, int y) {
 		case 'x':
 			posX = 0;
 			dragX = !dragX;
+			dragY = false;
 			break;
 		case 'y':
 			posY = 0;
 			dragY = !dragY;
+			dragX = false;
 			break;
 		case 'v':
 			if (viewMode == GL_TRIANGLES)
@@ -168,7 +183,7 @@ void keyboard(unsigned char key, int x, int y) {
 			u[0] = (upVector[1] * n[2]) - (n[1] * upVector[2]);
 			u[1] = -((upVector[0] * n[2]) - (n[0] * upVector[2]));
 			u[2] = (upVector[0] * n[1]) - (n[0] * upVector[1]);
-			//Calcula a norma de u e o torna unitário
+			//Calcula a norma de u e o torna unitï¿½rio
 			norm = sqrt(pow(u[0], 2) + pow(u[1], 2) + pow(u[2], 2));
 			u[0] = u[0] / norm;
 			u[1] = u[1] / norm;
@@ -194,11 +209,14 @@ void keyboard(unsigned char key, int x, int y) {
 			//Calcula o produto vetorial para achar o vetor u perpendicular a n e v
 			n[0] = lookPoint[0] - viewer[0]; n[1] = lookPoint[1] - viewer[1]; n[2] = lookPoint[2] - viewer[2];
 
-			u[0] = (upVector[1] * n[2]) - (n[1] * upVector[2]);
+			/*u[0] = (upVector[1] * n[2]) - (n[1] * upVector[2]);
 			u[1] = -((upVector[0] * n[2]) - (n[0] * upVector[2]));
-			u[2] = (upVector[0] * n[1]) - (n[0] * upVector[1]);
-			//Calcula a norma de u e o torna unitário
-			norm = sqrt(pow(u[0], 2) + pow(u[1], 2) + pow(u[2], 2));
+			u[2] = (upVector[0] * n[1]) - (n[0] * upVector[1]);*/
+
+			VectorialProd(upVector, n, u);
+
+			//Calcula a norma de u e o torna unitï¿½rio
+			norm = VecNorm(u);
 			u[0] = u[0] / norm;
 			u[1] = u[1] / norm;
 			u[2] = u[2] / norm;
@@ -223,11 +241,11 @@ void keyboard(unsigned char key, int x, int y) {
 			//Calcula o vetor n
 			n[0] = lookPoint[0] - viewer[0]; n[1] = lookPoint[1] - viewer[1]; n[2] = lookPoint[2] - viewer[2];
 
-			//Calcula a norma de n e o torna unitário
+			//Calcula a norma de n e o torna unitï¿½rio
 			norm = sqrt(pow(n[0], 2) + pow(n[1], 2) + pow(n[2], 2));
-			n[0] = abs(n[0] / norm);
-			n[1] = abs(n[1] / norm);
-			n[2] = abs(n[2] / norm);
+			n[0] = -n[0] / norm;
+			n[1] = -n[1] / norm;
+			n[2] = -n[2] / norm;
 
 			viewer[0] = viewer[0] + (n[0] * speed);
 			viewer[1] = viewer[1] + (n[1] * speed);
@@ -250,11 +268,11 @@ void keyboard(unsigned char key, int x, int y) {
 			//Calcula o vetor n
 			n[0] = lookPoint[0] - viewer[0]; n[1] = lookPoint[1] - viewer[1]; n[2] = lookPoint[2] - viewer[2];
 
-			//Calcula a norma de n e o torna unitário
-			norm = sqrt(pow(n[0], 2) + pow(n[1], 2) + pow(n[2], 2));
-			n[0] = abs(n[0] / norm);
-			n[1] = abs(n[1] / norm);
-			n[2] = abs(n[2] / norm);
+			//Calcula a norma de n e o torna unitï¿½rio
+			norm = VecNorm(n);
+			n[0] = -n[0] / norm;
+			n[1] = -n[1] / norm;
+			n[2] = -n[2] / norm;
 
 			viewer[0] = viewer[0] - (n[0] * speed);
 			viewer[1] = viewer[1] - (n[1] * speed);
@@ -278,9 +296,57 @@ void keyboard(unsigned char key, int x, int y) {
 /* Calcula o arrastar do mouse */
 void passiveMouse(int x, int y) {
 	double xf, yf;
+	GLfloat n[] = { 0.0, 0.0, 0.0 };
+	GLfloat u[] = { 0.0, 0.0, 0.0 };
+
 	xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
 	yf = (200) * (__HEIGHT - y) / __HEIGHT;
+
 	if (dragX) {
+		if (xf >= posX) {
+			if (xf >= posfX) {
+				yaw += ((xf - posX) / 10000);
+			}
+			else {
+				yaw -= ((xf - posX) / 10000);
+			}
+		}
+		else {
+			if (xf >= posfX) {
+				yaw -= ((xf - posX) / 10000);
+			}
+			else {
+				yaw += ((xf - posX) / 10000);
+			}
+		}
+		posfX = xf;
+	}
+	if (dragY) {
+
+		if (yf >= posY) {
+			if (yf >= posfY) {
+				if(pitch < 5)
+					pitch += ((yf - posY) / 10000);
+			}
+			else {
+				if(pitch > 2)
+					pitch -= ((yf - posY) / 10000);
+			}
+		}
+		else {
+			if (yf >= posfY) {
+				if(pitch >2)
+				pitch -= ((yf - posY) / 10000);
+			}
+			else {
+				if(pitch < 5)
+					pitch += ((yf - posY) / 10000);
+			}
+		}
+		posfY = yf;
+	}
+
+	/*if (dragX) {
 		if (xf >= posX) {
 			if (xf >= posfX) {
 				rotateY += ((xf - posX) / 100);
@@ -318,6 +384,16 @@ void passiveMouse(int x, int y) {
 			}
 		}
 		posfY = yf;
+	}*/
+
+	if((dragX || dragY)){
+		n[0] = lookPoint[0] - viewer[0]; n[1] = lookPoint[1] - viewer[1]; n[2] = lookPoint[2] - viewer[2];
+		VectorialProd(worldUp, n, u);
+		VectorialProd(n, u, upVector);
+
+		lookPoint[0] = (cos(yaw) * cos(pitch)) + viewer[0];
+		lookPoint[1] = sin(pitch) + viewer[1];
+		lookPoint[2] = (sin(yaw) * cos(pitch)) + viewer[2];
 	}
 }
 

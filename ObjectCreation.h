@@ -12,11 +12,13 @@ extern vector<Objeto> objs;
 void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
 	try {
+		
 		dr.initialize(fileName, color);
+		
 		objs.push_back(dr);
 	}
 	catch (int e) {
-		cerr << "Algum arquivo está faltando" << endl;
+		cerr << "Algum arquivo estï¿½ faltando" << endl;
 	}
 }
 

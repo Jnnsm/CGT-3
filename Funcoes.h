@@ -31,17 +31,21 @@ double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
 GLfloat viewer[] = { 3.0, 3.0, 6.0, 1 };
 GLfloat lookPoint[] = { 0.0, 0.0, 0.0 };
 GLfloat upVector[] = { 0.0, 1.0, 0.0 };
+const GLfloat worldUp[] = { 0.0, 1.0, 0.0 };
 
 /* Modo de exibição do objeto */
 GLint viewMode = GL_TRIANGLES;
 
 /* Movimentação do olho do observador */
 bool dragX = false, dragY = false;
-double posX, posY, posfX, posfY;
+double posX = 0, posY = 0, posfX = 0, posfY = 0;
 double rotateX = 0, rotateY = 0;
 
 /* String digitada na caixa de importa��o do objeto */
 string nameBox = "", valueBox = "";
+
+/* Movimento da câmera */
+GLdouble yaw=0, pitch=0;
 
 /* Identificadores para saber se o usu�rio est� digitando						*/
 /* clickedObj = -1 representa a tela de menu inteira							*/
@@ -73,15 +77,18 @@ void timer(int) {
 
 /* Inicializa uma tela vazia apenas com os eixos */
 void initialize() {
-
+	
 	glClearColor(0, 0, 0, 1);
 
 	/* Faz os desenhos iniciais */
 	resetView();
+	
 	objectsProjection();
+	
 	showBaseScreen();
 
 	createObj("popotato.obj", Quad<double>(1, 1, 1, 1));
+	
 
 	glutSwapBuffers();
 
