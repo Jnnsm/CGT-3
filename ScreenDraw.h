@@ -7,9 +7,10 @@
 #include "Objeto.h"
 
 extern int poly,
-deltaTime,
-frameCounter,
-averageTime;
+			deltaTime,
+			frameCounter,
+			averageTime;
+
 /* Limpa a tela */
 void resetView() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -40,11 +41,14 @@ void showBaseScreen() {
 
 /* Mostra um muro transparente */
 void displayWall() {
-	glColor4f(1, 1, 1, 0.5);
+	glColor4f(1, 1, 1, 1);
 
 	glBegin(viewMode);
-	glVertex3f(5, 5, 5);
-	glVertex3f(5, -5, 5);
+	glNormal3f(0, 0, -100);
+	glVertex3f(5, 5, 5); 
+	glNormal3f(0, 0, -100);
+	glVertex3f(5, -5, 5); 
+	glNormal3f(0, 0, -100);
 	glVertex3f(-5, -5, 5);
 	glEnd();
 }
@@ -183,11 +187,6 @@ void menuProjection() {
 void displayObjects() {
 
 	objectsProjection();
-	/* Rotaciona a "camera" */
-	glTranslated(viewer[0], viewer[1], viewer[2]);
-	glRotated(rotateX, 1, 0, 0);
-	glRotated(rotateY, 0, 1, 0);
-	glTranslated(-viewer[0], -viewer[1], -viewer[2]);
 
 	/* Mostra os eixos e os objetos */
 	showBaseScreen();

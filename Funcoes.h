@@ -26,7 +26,7 @@ double timeCounter = 0;
 /* Representa o scroll do menu */
 int menuPos = 0;
 
-/* Aspect Rato da tela e posi��o do observador */
+/* Aspect Ratio da tela e posicaoo do observador */
 double aspectRatio = 1.0f * __WIDTH / __HEIGHT;
 GLfloat viewer[] = { 3.0, 3.0, 6.0, 1 };
 GLfloat lookPoint[] = { 0.0, 0.0, 0.0 };
@@ -37,15 +37,11 @@ const GLfloat worldUp[] = { 0.0, 1.0, 0.0 };
 GLint viewMode = GL_TRIANGLES;
 
 /* Movimentação do olho do observador */
-bool dragX = false, dragY = false;
-double posX = 0, posY = 0, posfX = 0, posfY = 0;
-double rotateX = 0, rotateY = 0;
+double previousX = 0, previousY = 0;
+GLdouble yaw = 0, pitch = 0;
 
 /* String digitada na caixa de importa��o do objeto */
 string nameBox = "", valueBox = "";
-
-/* Movimento da câmera */
-GLdouble yaw=0, pitch=0;
 
 /* Identificadores para saber se o usu�rio est� digitando						*/
 /* clickedObj = -1 representa a tela de menu inteira							*/
@@ -77,21 +73,20 @@ void timer(int) {
 
 /* Inicializa uma tela vazia apenas com os eixos */
 void initialize() {
-	
 	glClearColor(0, 0, 0, 1);
+	glEnable(GL_NORMALIZE);
+	/* Define Yaw e Pitch iniciais */
+	GLfloat v[] = { lookPoint[0] - viewer[0], lookPoint[1] - viewer[1], lookPoint[2] - viewer[2] };
+	pitch = asin((v[1] / VecNorm(v)));
+	yaw = -acos((v[0] / VecNorm(v)) / cos(pitch));
 
 	/* Faz os desenhos iniciais */
 	resetView();
-	
 	objectsProjection();
-	
 	showBaseScreen();
-
 	createObj("popotato.obj", Quad<double>(1, 1, 1, 1));
 	
-
 	glutSwapBuffers();
-
 	glutTimerFunc(1000.0f / 60, timer, 0);
 }
 

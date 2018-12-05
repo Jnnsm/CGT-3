@@ -55,15 +55,15 @@ void lightsOn() {
 	if (lightTwo) {
 
 		glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0);
-		glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 1);
+		glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.01);
 		glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0);
 
-		glMaterialf(GL_FRONT, GL_SHININESS, 50);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 50);
 		glLightfv(GL_LIGHT1, GL_POSITION, viewer);
 		glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 15);
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, blue_light);
 
-		glMaterialf(GL_FRONT, GL_SHININESS, 100);
+		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 100);
 		glLightfv(GL_LIGHT1, GL_POSITION, viewer);
 		glLightfv(GL_LIGHT1, GL_SPECULAR, blue_light);
 	}

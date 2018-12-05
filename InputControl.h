@@ -18,16 +18,13 @@ extern const GLfloat worldUp[];
 extern GLint viewMode;
 
 extern bool dragX, dragY;
-extern double posX, posY, posfX, posfY;
-extern double rotateX, rotateY;
+
+extern double initialX, initialY, previousX, previousY;
+extern GLdouble yaw, pitch;
 
 extern string nameBox, valueBox;
 
 extern short clickedObj, typingField;
-
-extern bool lightOne, lightTwo, lightThree;
-
-extern GLdouble yaw, pitch;
 
 void VectorialProd(const GLfloat* v1, const GLfloat* v2, GLfloat* u){
 	u[0] = (v1[1] * v2[2]) - (v2[1] * v1[2]);
@@ -39,9 +36,12 @@ GLdouble VecNorm(const GLfloat* v1){
 	return sqrt(pow(v1[0], 2) + pow(v1[1], 2) + pow(v1[2], 2));
 }
 
-/* Define os comandos do teclado				 */
-/* i - k = comandos que movem o "menu"			 */
-/* w - a - s - d = comandos que movem os objetos */
+/* Define os comandos do teclado					 */
+/* i - k = comandos que movem o "menu"				 */
+/* w - a - s - d = comandos que movem os objetos	 */
+/* 1 - 2 - 3 = acende as luzes da cena               */
+/* x - y = ativa o movimento da camera em certo eixo */
+/* v = muda o view mode                              */
 
 void keyboard(unsigned char key, int x, int y) {
 	/* Quer digitar o nome de um novo objeto */
@@ -151,17 +151,6 @@ void keyboard(unsigned char key, int x, int y) {
 			else
 				glDisable(GL_LIGHT2);
 			break;
-
-		case 'x':
-			posX = 0;
-			dragX = !dragX;
-			dragY = false;
-			break;
-		case 'y':
-			posY = 0;
-			dragY = !dragY;
-			dragX = false;
-			break;
 		case 'v':
 			if (viewMode == GL_TRIANGLES)
 				viewMode = GL_LINE_LOOP;
@@ -208,10 +197,6 @@ void keyboard(unsigned char key, int x, int y) {
 				speed *= 5;
 			//Calcula o produto vetorial para achar o vetor u perpendicular a n e v
 			n[0] = lookPoint[0] - viewer[0]; n[1] = lookPoint[1] - viewer[1]; n[2] = lookPoint[2] - viewer[2];
-
-			/*u[0] = (upVector[1] * n[2]) - (n[1] * upVector[2]);
-			u[1] = -((upVector[0] * n[2]) - (n[0] * upVector[2]));
-			u[2] = (upVector[0] * n[1]) - (n[0] * upVector[1]);*/
 
 			VectorialProd(upVector, n, u);
 
@@ -294,115 +279,42 @@ void keyboard(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 /* Calcula o arrastar do mouse */
-void passiveMouse(int x, int y) {
-	double xf, yf;
-	GLfloat n[] = { 0.0, 0.0, 0.0 };
-	GLfloat u[] = { 0.0, 0.0, 0.0 };
+void clickedMouse(int x, int y) {
+	yaw -= (previousX - x) / 100;
+	if(pitch + (previousY - y) / 100 >= -3.14/2 && pitch + (previousY - y) / 100 <= 3.14/2)
+		pitch += (previousY - y) / 100;
+	cout << pitch << endl;
+	previousX = x;
+	previousY = y;
 
-	xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
-	yf = (200) * (__HEIGHT - y) / __HEIGHT;
+	lookPoint[0] = cos(pitch) * cos(yaw) + (viewer[0] );
+	lookPoint[1] = sin(pitch) + (viewer[1] );
+	lookPoint[2] = cos(pitch) * sin(yaw) + (viewer[2] );
 
-	if (dragX) {
-		if (xf >= posX) {
-			if (xf >= posfX) {
-				yaw += ((xf - posX) / 10000);
-			}
-			else {
-				yaw -= ((xf - posX) / 10000);
-			}
-		}
-		else {
-			if (xf >= posfX) {
-				yaw -= ((xf - posX) / 10000);
-			}
-			else {
-				yaw += ((xf - posX) / 10000);
-			}
-		}
-		posfX = xf;
-	}
-	if (dragY) {
+	GLfloat aux[] = { lookPoint[0] - viewer[0], lookPoint[1] - viewer[1], lookPoint[2] - viewer[2] };
 
-		if (yf >= posY) {
-			if (yf >= posfY) {
-				if(pitch < 5)
-					pitch += ((yf - posY) / 10000);
-			}
-			else {
-				if(pitch > 2)
-					pitch -= ((yf - posY) / 10000);
-			}
-		}
-		else {
-			if (yf >= posfY) {
-				if(pitch >2)
-				pitch -= ((yf - posY) / 10000);
-			}
-			else {
-				if(pitch < 5)
-					pitch += ((yf - posY) / 10000);
-			}
-		}
-		posfY = yf;
-	}
+	GLfloat aux2[3];
+	VectorialProd(worldUp, aux, aux2);
 
-	/*if (dragX) {
-		if (xf >= posX) {
-			if (xf >= posfX) {
-				rotateY += ((xf - posX) / 100);
-			}
-			else {
-				rotateY -= ((xf - posX) / 100);
-			}
-		}
-		else {
-			if (xf >= posfX) {
-				rotateY -= ((xf - posX) / 100);
-			}
-			else {
-				rotateY += ((xf - posX) / 100);
-			}
-		}
-		posfX = xf;
-	}
-	if (dragY) {
+	VectorialProd(aux, aux2, upVector);
 
-		if (yf >= posY) {
-			if (yf >= posfY) {
-				rotateX += ((yf - posY) / 100);
-			}
-			else {
-				rotateX -= ((yf - posY) / 100);
-			}
-		}
-		else {
-			if (yf >= posfY) {
-				rotateX -= ((yf - posY) / 100);
-			}
-			else {
-				rotateX += ((yf - posY) / 100);
-			}
-		}
-		posfY = yf;
-	}*/
-
-	if((dragX || dragY)){
-		n[0] = lookPoint[0] - viewer[0]; n[1] = lookPoint[1] - viewer[1]; n[2] = lookPoint[2] - viewer[2];
-		VectorialProd(worldUp, n, u);
-		VectorialProd(n, u, upVector);
-
-		lookPoint[0] = (cos(yaw) * cos(pitch)) + viewer[0];
-		lookPoint[1] = sin(pitch) + viewer[1];
-		lookPoint[2] = (sin(yaw) * cos(pitch)) + viewer[2];
-	}
+	upVector[0] = upVector[0] / VecNorm(upVector);
+	upVector[1] = upVector[1] / VecNorm(upVector);
+	upVector[2] = upVector[2] / VecNorm(upVector);
 }
 
 /* Defne os cliques do mouse */
 void mouse(int button, int state, int x, int y) {
+	
 	double xf, yf;
 	xf = (200 * aspectRatio) * (x - 3 * __WIDTH / 4) / __WIDTH;
 	yf = (200) * (__HEIGHT - y) / __HEIGHT;
 
+	/* Atribuição prévia para clicked mouse*/
+	if (state == GLUT_DOWN) {
+		previousX = x;
+		previousY = y;
+	}
 	/* Trata rolagem do mouse */
 	if (button == 4)
 		menuPos++;
@@ -427,8 +339,6 @@ void mouse(int button, int state, int x, int y) {
 			}
 			/* Se for clicado em alguma caixa de algum objeto*/
 			else if (xf >= 20.0f / 3 && xf <= 60 && yf <= 168) {
-
-				//cout << xf << " " << yf << endl;
 
 				/* Calcula pelo ortho e pelo movimento do menu qual objeto foi clicado */
 				double aux = ((yf - 133 + menuPos) / -40) + 0.875;
