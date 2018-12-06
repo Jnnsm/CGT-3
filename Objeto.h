@@ -126,12 +126,14 @@ public:
 	/* Vari�veis relacionadas com a textura */
 	unsigned char * img;
 	int width, height, channels;
-	GLuint t;
+	GLuint* t;
 
 	/* Vari�veis relacionadas com o arquivo */
 	string name;
 	string mtl;
-	string texImage;
+
+	vector<int> faceTex;
+	vector<pair<string,string>> faceMtl;
 
 	bool s;
 	vector<Trio<double>> v;
@@ -158,15 +160,17 @@ public:
 		scale.altera(1, 1, 1);
 
 		name = "";
-		rgba.altera(0, 0, 0, 1);
-		t = 0;
-		texImage = "";
+		rgba.altera(1, 1, 1, 1);
+		t = NULL;
+		delete t;
+		
 		width = height = channels = 0;
 		img = (unsigned char *)"";
 		mtl = "";
-		//stbi_image_free(img);
+
 		s = false;
 
+		faceMtl.clear();
 		v.clear();
 		vn.clear();
 		vt.clear();
@@ -193,36 +197,56 @@ public:
 
 	void getImageFromMtl() {
 		fstream file;
-		string line;
+		string line, name;
 		vector<string> aux;
 		file.open(mtl.c_str(), fstream::in | fstream::binary);
+
+		t = new GLuint[faceMtl.size()];
+
+		glGenTextures(faceMtl.size(), t);
 		
 		if (!file.good())
 			throw 1;
 
+
 		while (file >> line) {
-			if (line == "map_Kd") {
-				getline(file, line);
-				aux = split(line, " ");
-				texImage = aux.at(aux.size() - 1);
-				cout << texImage << endl;
+			if (line == "newmtl") {
+				file >> line;
+				name = line;
+				while (file >> line) {
+					if (line == "map_Kd") {
+						getline(file, line);
+						aux = split(line, " ");
+						for (int i = 0; i < faceMtl.size(); i++)
+							if (faceMtl.at(i).first == name) faceMtl.at(i).second = aux.at(aux.size() - 1);
+						break;
+					}
+				}
 			}
 		}
-		
-		img = stbi_load(texImage.c_str(), &width, &height, &channels, 0);
 
-		glGenTextures(1, &t);
-		glBindTexture(GL_TEXTURE_2D, t);
+		for (int i = 0; i < faceMtl.size(); i++)
+			cout << faceMtl.at(i).first << " " << faceMtl.at(i).second << endl;
+
+
 		
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, img);
+		for (int i = 0; i < faceMtl.size(); i++) {
+			img = stbi_load(faceMtl.at(i).second.c_str(), &width, &height, &channels, 0);
+			
+			glBindTexture(GL_TEXTURE_2D, t[i]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); //scale linearly when image bigger than texture
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); //scale linearly when image smalled than texture
+			
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img);
+
+		}
 	}
 
 	void read(string fileName) {
 
 		/* Vari�veis para auxilio do preenchimento */
 		fstream file;
-		string line;
+		string line, lineA;
 		vector<string> aux;
 
 
@@ -233,6 +257,7 @@ public:
 		Trio<Trio<double>> TDaux(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
 		string linePiece = "";
 		stringstream ssPiece;
+		int counter = 0;
 
 		file.open(fileName.c_str(), fstream::in | fstream::binary);
 
@@ -240,7 +265,14 @@ public:
 		if (!file.good())
 			throw 1;
 		while (file >> line) {
-			if (line == "mtllib") {
+
+			if (line == "usemtl") {
+				faceTex.push_back(f.size());
+				file >> line;
+				faceMtl.push_back(pair<string,string>(line,""));
+			}
+			else if (line == "mtllib") {
+				
 				file >> line;
 				mtl = split(line, " ").at(0);
 			}
@@ -267,39 +299,46 @@ public:
 				vn.push_back(Taux);
 			}
 			else if (line == "vt") {
-				for (int i = 0; i < 2; i++) {
-					file >> line;
-					istringstream(line) >> Daux.data[i];
+				if (getline(file, line)) {
+					aux = split(line, " ");
+					for (int i = 0; i < 2; i++) {
+						istringstream(aux.at(i)) >> Daux.data[i];
+					}
 				}
 				
 				vt.push_back(Daux);
 			}
 			else if (line == "f") {
-
 				int i = 0, j = 0;
 				TDaux.altera(Trio<double>(0, 0, 0), Trio<double>(0, 0, 0), Trio<double>(0, 0, 0));
-				while (i < 3 && file >> line) {
-
-					ssPiece.str("");
-					ssPiece.clear();
-					ssPiece.str((line + "/"));
-					j = 0;
-					while (j < 3 && getline(ssPiece, linePiece, '/')) {
-						istringstream(linePiece) >> TDaux.data[i].data[j];
-						if (TDaux.data[i].data[j] < 0)
-							TDaux.data[i].data[j] = v.size() + TDaux.data[i].data[j];
-						j++;
+				if (getline(file, line)) {
+					aux = split(line, " ");
+					for (int k = 0; k < aux.size(), k < 3; k++) {
+						ssPiece.str("");
+						ssPiece.clear();
+						ssPiece.str((aux.at(k) + "/"));
+						j = 0;
+						while (j < 3 && getline(ssPiece, linePiece, '/')) {
+							istringstream(linePiece) >> TDaux.data[i].data[j];
+							if (TDaux.data[i].data[j] < 0)
+								TDaux.data[i].data[j] = v.size() + TDaux.data[i].data[j];
+							j++;
+						}
+						i++;
 					}
-					i++;
-
 				}
+				else break;
 				f.push_back(TDaux);
 			}
-			else
+			else {
 				getline(file, line);
+			}
+
+			counter++;
+
 		}
 		file.close();
-
+		faceTex.push_back(f.size());
 		if(mtl != "")
 			getImageFromMtl();
 	}

@@ -41,15 +41,17 @@ void showBaseScreen() {
 
 /* Mostra um muro transparente */
 void displayWall() {
-	glColor4f(1, 1, 1, 1);
+	glColor4f(1, 1, 1, 0.5);
 
 	glBegin(viewMode);
-	glNormal3f(0, 0, -100);
-	glVertex3f(5, 5, 5); 
-	glNormal3f(0, 0, -100);
-	glVertex3f(5, -5, 5); 
-	glNormal3f(0, 0, -100);
-	glVertex3f(-5, -5, 5);
+		glNormal3f(0, 0, -100);
+		glVertex3f(-5, -5, 5);
+
+		glNormal3f(0, 0, -100);
+		glVertex3f(5, -5, 5); 
+
+		glNormal3f(0, 0, -100);
+		glVertex3f(5, 5, 5);
 	glEnd();
 }
 /* Desenha cada objeto na tela */
@@ -58,19 +60,10 @@ void showObjects() {
 	glEnable(GL_BLEND);
 
 	poly = 0;
-
+	int j;
 	for (vector<Objeto>::iterator o = objs.begin(); o != objs.end(); o++) {
-		
+		j = 0;
 		if ((*o).visible) {
-			glBindTexture(GL_TEXTURE_2D, (*o).t);
-			glEnable(GL_TEXTURE_2D);
-			if ((*o).width > 0 && (*o).height > 0 && (*o).img != NULL) {
-				
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			}
 
 			poly += (*o).f.size();
 			glPushMatrix();
@@ -82,6 +75,27 @@ void showObjects() {
 
 
 			for (int i = 0; i < (*o).f.size(); i++) {
+				if ((*o).img != NULL) {
+
+					glEnable(GL_TEXTURE_2D);
+
+					if ((*o).faceTex.size() > 1)
+						for (j = 0; j < (*o).faceTex.size() - 1; j++) {
+							if ((*o).faceTex.at(j) <= i && i < (*o).faceTex.at(j + 1)) {
+								break;
+
+							}
+							else if (j == (*o).faceTex.size() - 1) {
+								j--;
+								break;
+							}
+						}
+
+					glBindTexture(GL_TEXTURE_2D, (*o).t[j]);
+					
+				}
+
+
 				/* Pegamos da face i os 3 vertices que a compoe, dai, desses 3 vertices pegamos 3 coordenadas para representa-los no espa�o */
 		
 				glBegin(viewMode);
@@ -144,8 +158,9 @@ void showObjects() {
 				glEnd();
 			}
 			glPopMatrix();
-			glDisable(GL_TEXTURE_2D);
+			
 		}
+		glDisable(GL_TEXTURE_2D);
 	}
 }
 

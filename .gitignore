@@ -263,3 +263,7 @@ __pycache__/
 *.o
 /buda.mtl
 /eoq.mtl
+/background.png
+*.png
+*.jpg
+*.mtl

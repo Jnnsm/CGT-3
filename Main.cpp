@@ -2,8 +2,9 @@
 #include <GL/glut.h>
 #include <time.h>
 #include <time.h>
-#include "Objeto.h"
 #include "Funcoes.h"
+#include "Objeto.h"
+
 
 
 /*
@@ -19,6 +20,7 @@ using namespace std;
 
 /* Vector com v�rios objetos a serem desenhados */
 vector<Objeto> objs;
+
 double __WIDTH = 800, __HEIGHT = 600;
 
 int main(int argc, char **argv) {

@@ -283,7 +283,6 @@ void clickedMouse(int x, int y) {
 	yaw -= (previousX - x) / 100;
 	if(pitch + (previousY - y) / 100 >= -3.14/2 && pitch + (previousY - y) / 100 <= 3.14/2)
 		pitch += (previousY - y) / 100;
-	cout << pitch << endl;
 	previousX = x;
 	previousY = y;
 

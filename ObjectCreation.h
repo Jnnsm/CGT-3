@@ -13,7 +13,7 @@ void createObj(string fileName, Quad<double> color) {
 	Objeto dr;
 	try {
 		
-		dr.initialize(fileName, color);
+		dr.initialize(fileName);
 		
 		objs.push_back(dr);
 	}
